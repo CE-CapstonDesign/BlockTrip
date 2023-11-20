@@ -27,4 +27,16 @@ public class SearchController {
         return "index";
     }
 
+    @PostMapping("/crawl2")
+    public String crawlWebsite2(@RequestParam("myLocation") String myLocation,@RequestParam("mySearch") String mySearch) {
+        searchService.mapSearchValid(myLocation, mySearch);
+        return "index";
+    }
+
+    @PostMapping("/flight")
+    public String flightCrawl(@RequestParam("depart") String depart,@RequestParam("dest") String dest,@RequestParam("departDate") String departDate,@RequestParam("destDate") String destDate) throws InterruptedException {
+        searchService.crawlingFlight(depart, dest, departDate, destDate);
+        return "index";
+    }
+
 }
