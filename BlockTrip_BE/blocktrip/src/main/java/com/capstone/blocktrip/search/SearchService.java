@@ -156,16 +156,16 @@ public class SearchService {
         ChromeDriver driver = new ChromeDriver(options);
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("출발지를 입력하세요: ");
+        // System.out.print("출발지를 입력하세요: ");
         // String departureCity = scanner.nextLine();
 
-        System.out.print("도착지를 입력하세요: ");
+        // System.out.print("도착지를 입력하세요: ");
         // String arrivalCity = scanner.nextLine();
 
-        System.out.print("출발일을 입력하세요 (YYYY-MM-DD): ");
+        // System.out.print("출발일을 입력하세요 (YYYY-MM-DD): ");
         //  String departureDate = scanner.nextLine();
 
-        System.out.print("반환일을 입력하세요 (YYYY-MM-DD): ");
+        // System.out.print("반환일을 입력하세요 (YYYY-MM-DD): ");
         //  String returnDate = scanner.nextLine();
 
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
@@ -201,11 +201,16 @@ public class SearchService {
         WebElement timeElement2 = flightInfoElements.get(1).findElement(By.cssSelector(".time"));
         String arrivalTime = timeElement2.getText();
 
+        // 최저가 항공권의 비행 소요 시간
+        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_RqV"));
+        String duration = durationElement.getText();
 
         // 결과를 출력합니다.
-        System.out.println("\n가격: " + priceElement.getText());
+        System.out.println("====== 최저가 항공권에 대한 정보 ======");
+        System.out.println("가격: " + priceElement.getText());
         System.out.println("출발시간: " + departureTime);
         System.out.println("도착시간: " + arrivalTime);
+        System.out.println("소요시간: " + duration);
 
         scanner.close();
     }
