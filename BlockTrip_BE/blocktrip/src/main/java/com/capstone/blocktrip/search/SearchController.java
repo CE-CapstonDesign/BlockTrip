@@ -38,5 +38,4 @@ public class SearchController {
         searchService.crawlingFlight(depart, dest, departDate, destDate);
         return "index";
     }
-
 }
