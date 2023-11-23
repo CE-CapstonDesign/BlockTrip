@@ -181,8 +181,8 @@ public class SearchService {
 
         driver.get(url);
 
-        // 트립닷컴의 항공권 최저가 검색이 완료된 후 크롤링을 진행하기 위해서 10초동안 쉬고 크롤링을 진행합니다.
-        Thread.sleep(10000);
+        // 트립닷컴의 항공권 최저가 검색이 완료된 후 크롤링을 진행하기 위해서 8초동안 쉬고 크롤링을 진행합니다.
+        Thread.sleep(8000);
 
         // [class="item-con-price"] span 의 CSS 선택자 요소가 나타날 때까지 대기합니다. (최대 10초)
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
