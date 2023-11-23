@@ -39,4 +39,10 @@ public class SearchController {
         return "index";
     }
 
+    @PostMapping("/hotel")
+    public String hotelCrawl(@RequestParam("place") String place,@RequestParam("checkin") String checkin,@RequestParam("checkout") String checkout,@RequestParam("option") String option) throws InterruptedException {
+        searchService.crawlingHotel(place, checkin, checkout, option);
+        return "index";
+    }
+
 }

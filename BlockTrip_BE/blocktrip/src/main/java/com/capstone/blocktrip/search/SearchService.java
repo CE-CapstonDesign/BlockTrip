@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,6 +140,67 @@ public class SearchService {
         }
     }
 
+    public void crawlingHotel(String dest, String checkin, String checkout, String option){
+
+        // WebDriver 설정
+        String WEB_DRIVER_ID = "webdriver.chrome.driver";
+        String WEB_DRIVER_PATH = "chromedriver.exe";
+        System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+
+        // WebDriver 옵션 설정
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized");
+        options.addArguments("disable-popup-blocking");
+        options.addArguments("disable-defult-apps");
+
+        // WebDriver 인스턴스 생성
+        WebDriver driver = new ChromeDriver(options);
+
+
+        try {
+            // 여행 지역 입력 받기
+            String destination = dest;
+            String encodedDestination = URLEncoder.encode(destination, "UTF-8");
+
+            // 체크인/체크아웃 날짜 입력 받기
+            String checkinDate = checkin;
+            String checkoutDate = checkout;
+
+            // 리뷰 순, 가격 순, 추천 순 옵션 입력 받기
+            String orderOption = option;
+
+            // URL 조합
+            String url = "https://www.booking.com/searchresults.en-gb.html?ss=" + encodedDestination +
+                    "&label=gen173nr-1BCAEoggI46AdIM1gEaH2IAQGYAQm4ARfIAQzYAQHoAQGIAgGoAgO4Ao_V-6oGwAIB0gIkZjlhYTI3MTMtNjBiYi00NGE2-LWE1MTQtZTRhOTgwMmVkMmEy2AIF4AIB" +
+                    "&sid=986d075024858043272bea5d90b0d8d1&aid=304142&lang=en-gb&sb=1&src_elem=sb&src=searchresults&dest_type=region" +
+                    "&checkin=" + checkinDate + "&checkout=" + checkoutDate +
+                    "&group_adults=2&no_rooms=1&group_children=0&order=" + orderOption;
+
+            // WebDriver로 URL 열기
+            driver.get(url);
+
+            // 페이지 소스 가져오기
+            String pageSource = driver.getPageSource();
+
+            // Jsoup을 사용하여 페이지 소스 파싱
+            Document document = Jsoup.parse(pageSource);
+            System.out.println("====== 사용자 선호도를 고려한 호텔 검색 =====");
+            // 호텔 정보가 있는 요소를 선택
+            Elements hotelElements = document.select("div[data-testid=title]");
+            Elements hotelPriceElements = document.select("span[data-testid=price-and-discounted-price]");
+            if(hotelElements.size()!=0) {
+                System.out.println("호텔 이름: " + hotelElements.get(0).text());
+                System.out.println("호텔 가격: " + hotelPriceElements.get(0).text());
+            } else {
+                System.out.println("해당 지역의 호텔을 찾지 못했습니다.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("검색 완료!");
+
+    }
+
     @Transactional
     public void crawlingFlight(String depart, String dest, String departDate, String destDate ) throws InterruptedException {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
@@ -154,30 +216,10 @@ public class SearchService {
         options.addArguments("disable-defult-apps");
 
         ChromeDriver driver = new ChromeDriver(options);
-        Scanner scanner = new Scanner(System.in);
-
-        // System.out.print("출발지를 입력하세요: ");
-        // String departureCity = scanner.nextLine();
-
-        // System.out.print("도착지를 입력하세요: ");
-        // String arrivalCity = scanner.nextLine();
-
-        // System.out.print("출발일을 입력하세요 (YYYY-MM-DD): ");
-        //  String departureDate = scanner.nextLine();
-
-        // System.out.print("반환일을 입력하세요 (YYYY-MM-DD): ");
-        //  String returnDate = scanner.nextLine();
 
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
         String url = String.format("https://kr.trip.com/flights/%s-to-%s/tickets-sel-dad?dcity=sel,icn&acity=osa&ddate=%s&rdate=%s&flighttype=rt&class=y&lowpricesource=searchform&quantity=1&searchboxarg=t",
                 depart, dest, departDate, destDate);
-
-        driver.executeScript("window.open('about:blank','_blank');");
-
-        List<String> tabs = new ArrayList<>(driver.getWindowHandles());
-
-        //첫번째 탭으로 전환
-        driver.switchTo().window(tabs.get(0));
 
         driver.get(url);
 
@@ -191,7 +233,10 @@ public class SearchService {
         WebElement priceElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class=\"item-con-price\"] span")));
 
         // 항공권의 출발/도착 시간을 추출하기 위한 CSS 선택자 ".flight-info-airline__timer_RWx"
-        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector(".flight-info-airline__timer_RWx"));
+        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector(".flight-info-airline__timer_1zU"));
+
+        List<WebElement> flightNameElements = driver.findElements(By.cssSelector(".flights-name_1zN"));
+
 
         // 최저가 항공권의 출발 시간을 추출합니다.
         WebElement timeElement = flightInfoElements.get(0).findElement(By.cssSelector(".time"));
@@ -201,18 +246,22 @@ public class SearchService {
         WebElement timeElement2 = flightInfoElements.get(1).findElement(By.cssSelector(".time"));
         String arrivalTime = timeElement2.getText();
 
+        // 최저가 항공권의 항공편 이름을 추출합니다.
+        String flightName = flightNameElements.get(0).getText();
+
         // 최저가 항공권의 비행 소요 시간
-        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_RqV"));
+        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_1JF"));
         String duration = durationElement.getText();
 
         // 결과를 출력합니다.
         System.out.println("====== 최저가 항공권에 대한 정보 ======");
+        System.out.println("항공편 이름: " + flightName);
         System.out.println("가격: " + priceElement.getText());
         System.out.println("출발시간: " + departureTime);
         System.out.println("도착시간: " + arrivalTime);
         System.out.println("소요시간: " + duration);
 
-        scanner.close();
+
     }
 
 
