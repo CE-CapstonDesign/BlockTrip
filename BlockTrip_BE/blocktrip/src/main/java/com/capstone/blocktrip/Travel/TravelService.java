@@ -89,10 +89,13 @@ public class TravelService {
             JsonNode choices = rootNode.path("choices");
             if (!choices.isMissingNode() && choices.isArray()) {
                 for (JsonNode choice : choices) {
-                    String text = choice.path("text").asText();
-                    String[] items = text.split(",");
-                    for (String item : items) {
-                        results.add(item.trim());
+                    JsonNode messageNode = choice.path("message");
+                    if (!messageNode.isMissingNode()) {
+                        String content = messageNode.path("content").asText();
+                        String[] items = content.split(",");
+                        for (String item : items) {
+                            results.add(item.trim());
+                        }
                     }
                 }
             }
