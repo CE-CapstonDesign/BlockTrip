@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,14 +39,15 @@ public class ChatGPTService {
 
     private Mono<String> callGPT3Internal(String prompt, boolean async) {
         return webClient.post()
-                .uri("https://api.openai.com/v1/engines/text-davinci-003/completions")
+                .uri("/v1/chat/completions")
                 .headers(headers -> headers.setBearerAuth(apiKey))
                 .bodyValue(Map.of(
-                        "prompt", prompt,
-                        "max_tokens", 150,
-                        "temperature", 0.8
+                        "model", "gpt-3.5-turbo",
+                        "messages", List.of(Map.of("role", "user", "content", prompt))
                 ))
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(String.class)
+                .doOnNext(response -> logger.info("Received response: {}", response))
+                .doOnError(error -> logger.error("Error during GPT-3 call", error));
     }
 }
