@@ -6,11 +6,10 @@ import lombok.ToString;
 
 import java.util.List;
 
+@Getter
+@Setter
 public class TravelResponse {
-    @Getter
-    @Setter
-    @ToString
-    public static class OutputDTO {
-        private List<String> accommodations;
-    }
+    private List<String> recommendedRestaurants;
+    private List<String> recommendedPlaces;
+
 }
