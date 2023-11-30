@@ -10,15 +10,43 @@ public class TravelRequest {
 
     @Getter
     @Setter
+    private CommonRequest common;
+
+    @Getter
+    @Setter
+    private RestaurantRequest restaurant;
+
+    @Getter
+    @Setter
+    private PlaceRequest place;
+
+    @Getter
+    @Setter
     @ToString
-    public static class InputDTO {
-        private String destination;
-        private Double budget;
-        private String duration;
-        private String interests;
-        private String transport;
-        private String travelStyle;
-        private String foodType;
+    public static class CommonRequest {
+        private String departureLocation;
+        private String destinationLocation;
+        private String departureDate;
+        private String arrivalDate;
     }
 
+    @Getter
+    @Setter
+    @ToString
+    public static class RestaurantRequest {
+        private List<String> foodType;
+        // 선호하는
+        private List<String> restaurantType;
+        // 카테고리
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    public static class PlaceRequest {
+        private List<String> interests;
+        // 관심있는
+        private List<String> travelStyle;
+        // 여행 스타일
+    }
 }

@@ -19,8 +19,8 @@ public class TravelController {
     }
 
     @PostMapping("/plan")
-    public ResponseEntity<TravelResponse.OutputDTO> createTravelPlan(@RequestBody TravelRequest.InputDTO request) {
-        TravelResponse.OutputDTO travelPlan = travelService.generatePlan(request);
+    public ResponseEntity<TravelResponse> createTravelPlan(@RequestBody TravelRequest request) {
+        TravelResponse travelPlan = travelService.generatePlan(request);
         return ResponseEntity.ok(travelPlan);
     }
 }

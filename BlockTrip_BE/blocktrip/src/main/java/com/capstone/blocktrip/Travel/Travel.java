@@ -13,46 +13,53 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "travels")
-public class Travel {
+public class Travel{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "destination")
-    private String destination;
+    @Column(name = "departure_location")
+    private String departureLocation;
 
-    @Column(name = "budget")
-    private Double budget;
+    @Column(name = "destination_location")
+    private String destinationLocation;
 
-    @Column(name = "duration")
-    private String duration; // Date를 써야할까?
+    @Column(name = "departure_date")
+    private String departureDate;
 
+    @Column(name = "arrival_date")
+    private String arrivalDate;
+
+    @ElementCollection
     @Column(name = "interests")
-    private String interests;
+    private List<String> interests;
 
-    @Column(name = "transport")
-    private String transport;
+    @ElementCollection
+    @Column(name = "travel_styles")
+    private List<String> travelStyles;
 
-    @Column(name = "travel_style")
-    private String travelStyle;
+    @ElementCollection
+    @Column(name = "food_types")
+    private List<String> foodTypes;
 
-    @Column(name = "food_type")
-    private String foodType;
+    @ElementCollection
+    @Column(name = "restaurant_types")
+    private List<String> restaurantTypes;
 
-//    @Column(name = "accommodations")
-//    private List<String> accommodations;
 
     @Builder
-    public Travel(String destination, Double budget, String duration, String interests, String transport, String travelStyle, String foodType, List<String> accommodations) {
-        this.destination = destination;
-        this.budget = budget;
-        this.duration = duration;
+    public Travel(String departureLocation, String destinationLocation,
+                  String departureDate, String arrivalDate,
+                  List<String> interests, List<String> travelStyles,
+                  List<String> foodTypes, List<String> restaurantTypes) {
+        this.departureLocation = departureLocation;
+        this.destinationLocation = destinationLocation;
+        this.departureDate = departureDate;
+        this.arrivalDate = arrivalDate;
         this.interests = interests;
-        this.transport = transport;
-        this.travelStyle = travelStyle;
-        this.foodType = foodType;
-//        this.accommodations = accommodations;
+        this.travelStyles = travelStyles;
+        this.foodTypes = foodTypes;
+        this.restaurantTypes = restaurantTypes;
     }
-
 }
