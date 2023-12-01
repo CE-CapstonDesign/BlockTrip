@@ -1,5 +1,7 @@
 package com.capstone.blocktrip.Travel;
 
+import com.capstone.blocktrip.Travel.response.TravelResponseDTO;
+import com.capstone.blocktrip.search.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class TravelController {
 
     private final TravelService travelService;
+    private final SearchService searchService;
 
     @Autowired
-    public TravelController(TravelService travelService) {
+    public TravelController(TravelService travelService, SearchService searchService) {
         this.travelService = travelService;
+        this.searchService = searchService;
     }
 
     @PostMapping("/plan")
-    public ResponseEntity<TravelResponse> createTravelPlan(@RequestBody TravelRequest request) {
+    public ResponseEntity<TravelResponseDTO> createTravelPlan(@RequestBody TravelRequest request) {
+        TravelResponseDTO travelResponseDTO = new TravelResponseDTO();
         TravelResponse travelPlan = travelService.generatePlan(request);
-        return ResponseEntity.ok(travelPlan);
+        travelResponseDTO = searchService.shortestPath(request,travelPlan);
+        return ResponseEntity.ok(travelResponseDTO);
     }
 }
 
