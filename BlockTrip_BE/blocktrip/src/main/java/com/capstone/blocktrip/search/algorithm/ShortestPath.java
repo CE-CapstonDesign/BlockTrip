@@ -29,7 +29,10 @@ public class ShortestPath {
         System.out.println("디버깅용 place size: " + restaurant.size());
         for(int i=0; i<restaurant.size(); i++){
             double distance = calculateDistance(currentLatitude, currentLongitude, restaurant.get(i).getLatitude(), restaurant.get(i).getLongitude());
+            System.out.println("현재 비교하는 distance: " + distance);
+            System.out.println("현재 shortestDistance: " + shortestDistance);
             if(distance < shortestDistance){
+                System.out.println("shortestDistance 업데이트: " + shortestDistance);
                 shortestDistance = distance;
                 shortestIdx = i;
             }

@@ -183,7 +183,7 @@ public class SearchService {
         }
     }
 
-    public void crawlingHotel(String dest, String checkin, String checkout, String option, TravelResponseDTO travelResponseDTO){
+    public void crawlingHotel(String dest, String checkin, String checkout, String option, String adult, String room, String child ,TravelResponseDTO travelResponseDTO){
 
         // WebDriver 설정
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
@@ -217,7 +217,7 @@ public class SearchService {
                     "&label=gen173nr-1BCAEoggI46AdIM1gEaH2IAQGYAQm4ARfIAQzYAQHoAQGIAgGoAgO4Ao_V-6oGwAIB0gIkZjlhYTI3MTMtNjBiYi00NGE2-LWE1MTQtZTRhOTgwMmVkMmEy2AIF4AIB" +
                     "&sid=986d075024858043272bea5d90b0d8d1&aid=304142&lang=en-gb&sb=1&src_elem=sb&src=searchresults&dest_type=region" +
                     "&checkin=" + checkinDate + "&checkout=" + checkoutDate +
-                    "&group_adults=2&no_rooms=1&group_children=0&order=" + orderOption;
+                    "&group_adults=" + adult + "&no_rooms=" + room + "&group_children=" + child + "&order=" + orderOption;
 
             // WebDriver로 URL 열기
             driver.get(url);
@@ -247,7 +247,7 @@ public class SearchService {
     }
 
     @Transactional
-    public void crawlingFlight(String depart, String dest, String departDate, String destDate,TravelResponseDTO travelResponseDTO, int idx ) throws InterruptedException {
+    public void crawlingFlight(String depart, String dest, String departDate, String destDate,String flightType, String seatClass, String quantity, String childqty, String babyqty, TravelResponseDTO travelResponseDTO, int idx ) throws InterruptedException {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
         String WEB_DRIVER_PATH = "chromedriver.exe";
 
@@ -263,8 +263,8 @@ public class SearchService {
         ChromeDriver driver = new ChromeDriver(options);
 
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
-        String url = String.format("https://kr.trip.com/flights/%s-to-%s/tickets-sel-dad?dcity=sel,icn&acity=osa&ddate=%s&rdate=%s&flighttype=rt&class=y&lowpricesource=searchform&quantity=1&searchboxarg=t",
-                depart, dest, departDate, destDate);
+        String url = String.format("https://kr.trip.com/flights/%s-to-%s/tickets-sel-dad?dcity=%s&acity=%s&ddate=%s&rdate=%s&flighttype=%s&class=%s&lowpricesource=searchform&quantity=%s&childqty=%s&childqty=%s&searchboxarg=t",
+                depart, dest, depart,dest,departDate, destDate,flightType,seatClass,quantity,childqty,babyqty);
 
         driver.get(url);
 
@@ -278,9 +278,9 @@ public class SearchService {
         WebElement priceElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class=\"item-con-price\"] span")));
 
         // 항공권의 출발/도착 시간을 추출하기 위한 CSS 선택자 ".flight-info-airline__timer_RWx"
-        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector(".flight-info-airline__timer_nKR"));
+        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector(".flight-info-airline__timer_aBE"));
 
-        List<WebElement> flightNameElements = driver.findElements(By.cssSelector(".flights-name_nKh"));
+        List<WebElement> flightNameElements = driver.findElements(By.cssSelector(".flights-name_aBt"));
 
 
         // 최저가 항공권의 출발 시간을 추출합니다.
@@ -295,7 +295,7 @@ public class SearchService {
         String flightName = flightNameElements.get(0).getText();
 
         // 최저가 항공권의 비행 소요 시간
-        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_nVt"));
+        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_azI"));
         String duration = durationElement.getText();
 
         // 결과를 출력합니다.
@@ -329,8 +329,42 @@ public class SearchService {
         String departureLocation = travelRequestDTO.getCommon().getDepartureLocation();
         // 도착지
         String destinationLocation = travelRequestDTO.getCommon().getDestinationLocation();
-        // 호텔 옵션
-        String hotelOption = travelRequestDTO.getHotel().getSort();
+
+        // *** 항공권 옵션
+        // 좌석 옵션
+        String flightSeatClass = travelRequestDTO.getFlight().getSeatClass();
+        // 비행 타입
+        String flightFype = travelRequestDTO.getFlight().getFlightType();
+        // 항공권 출발지
+        String flightDepart = travelRequestDTO.getFlight().getDepart();
+        // 항공권 도착지
+        String flightArrive = travelRequestDTO.getFlight().getArrive();
+        // 항공권 출국 날짜
+        String flightDepartDate = travelRequestDTO.getFlight().getDepartDate();
+        // 항공권 도착 날짜
+        String flightArriveDate = travelRequestDTO.getFlight().getArriveDate();
+        // 항공권 인원
+        String flightQuantity = travelRequestDTO.getFlight().getQuantity();
+        // 항공권 아이 인원
+        String flightChildQuantity = travelRequestDTO.getFlight().getChildQuantity();
+        // 항공권 영유아 인원
+        String flightBabyQuantity = travelRequestDTO.getFlight().getBabyQuantity();
+
+        // 호텔 지역
+        String hotelRegion = travelRequestDTO.getHotel().getRegion();
+        // 호텔 체크인 날짜
+        String hotelCheckin = travelRequestDTO.getHotel().getCheckin();
+        // 호텔 체크아웃 날짜
+        String hotelCheckout = travelRequestDTO.getHotel().getCheckout();
+        // 호텔 성인 인원
+        String hotelAdult = travelRequestDTO.getHotel().getAdult();
+        // 호텔 방 개수
+        String hotelRoom = travelRequestDTO.getHotel().getRoom();
+        // 호텔 영유아 인원
+        String hotelChild = travelRequestDTO.getHotel().getChild();
+        // 호텔 정렬 옵션
+        String hotelSort = travelRequestDTO.getHotel().getSort();
+
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -344,10 +378,10 @@ public class SearchService {
         // 항공권 및 호텔 추천 받기
         try {
             // 여행지로 가는 항공권 크롤링
-            crawlingFlight(departureLocation, destinationLocation, departDate, departDate, travelResponseDTO, 0);
+            crawlingFlight(flightDepart, flightArrive, flightDepartDate, flightDepartDate,flightFype,flightSeatClass,flightQuantity,flightChildQuantity,flightBabyQuantity , travelResponseDTO, 0);
             // 여행지로 도착하는 항공권 크롤링
-            crawlingFlight(departureLocation, departureLocation, arrivalDate, arrivalDate, travelResponseDTO, 1);
-            crawlingHotel(destinationLocation, departDate, arrivalDate, hotelOption, travelResponseDTO);
+            crawlingFlight(flightArrive, flightDepart, flightArriveDate, flightArriveDate,flightFype,flightSeatClass,flightQuantity,flightChildQuantity,flightBabyQuantity , travelResponseDTO, 1);
+            crawlingHotel(hotelRegion, hotelCheckin, hotelCheckout, hotelSort,hotelAdult,hotelRoom,hotelChild, travelResponseDTO);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -390,15 +424,20 @@ public class SearchService {
         // 귀국을 위한 항공권  탑승 시간을 추출합니다.
         String departTime = travelResponseDTO.getFlightList().get(1).getDepart();
         int departHour = Integer.parseInt(arriveTime.split(":")[0]);
-
-        for(long i=0; i<=daysBetween; i++){
-            if(i==0){ // 첫 날
-                SortPath.firstDaySort(arriveHour,travelResponseDTO,airportCoordinate,realRestaurant,realPlace);
-            } else if(i==daysBetween){ // 마지막 날
-                SortPath.lastDaySort(departHour,travelResponseDTO,hotelCoordinate,realRestaurant,realPlace);
-            } else { // 나머지 날
-                SortPath.restDaySort(travelResponseDTO, hotelCoordinate,realRestaurant,realPlace);
+        try {
+            for (long i = 0; i <= daysBetween; i++) {
+                if (i == 0) { // 첫 날
+                    SortPath.firstDaySort(arriveHour, travelResponseDTO, airportCoordinate, realRestaurant, realPlace);
+                } else if (i == daysBetween) { // 마지막 날
+                    SortPath.lastDaySort(departHour, travelResponseDTO, hotelCoordinate, realRestaurant, realPlace);
+                } else { // 나머지 날
+                    SortPath.restDaySort(travelResponseDTO, hotelCoordinate, realRestaurant, realPlace);
+                }
             }
+        }
+        catch (Exception e){
+            System.out.println("죄송합니다. GPT가 요소를 찾는데 실패하였습니다.");
+            return travelResponseDTO;
         }
 
         return travelResponseDTO;
