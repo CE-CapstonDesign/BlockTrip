@@ -35,13 +35,13 @@ public class SearchController {
 
     @PostMapping("/flight")
     public String flightCrawl(@RequestParam("depart") String depart,@RequestParam("dest") String dest,@RequestParam("departDate") String departDate,@RequestParam("destDate") String destDate) throws InterruptedException {
-        searchService.crawlingFlight(depart, dest, departDate, destDate);
+       // searchService.crawlingFlight(depart, dest, departDate, destDate);
         return "index";
     }
 
     @PostMapping("/hotel")
     public String hotelCrawl(@RequestParam("location") String location,@RequestParam("checkin") String checkin,@RequestParam("checkout") String checkout,@RequestParam("option") String option) throws InterruptedException {
-        searchService.crawlingHotel(location, checkin, checkout, option);
+       // searchService.crawlingHotel(location, checkin, checkout, option);
         return "index";
     }
 
