@@ -278,9 +278,9 @@ public class SearchService {
         WebElement priceElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class=\"item-con-price\"] span")));
 
         // 항공권의 출발/도착 시간을 추출하기 위한 CSS 선택자 ".flight-info-airline__timer_RWx"
-        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector(".flight-info-airline__timer_aBE"));
+        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector("[class^=\"flight-info-airline__timer\"]"));
 
-        List<WebElement> flightNameElements = driver.findElements(By.cssSelector(".flights-name_aBt"));
+        List<WebElement> flightNameElements = driver.findElements(By.cssSelector("[class^=\"flights-name\"]"));
 
 
         // 최저가 항공권의 출발 시간을 추출합니다.
@@ -295,7 +295,7 @@ public class SearchService {
         String flightName = flightNameElements.get(0).getText();
 
         // 최저가 항공권의 비행 소요 시간
-        WebElement durationElement = driver.findElement(By.cssSelector(".flight-info-duration_azI"));
+        WebElement durationElement = driver.findElement(By.cssSelector("[class^=\"flight-info-duration\"]"));
         String duration = durationElement.getText();
 
         // 결과를 출력합니다.
