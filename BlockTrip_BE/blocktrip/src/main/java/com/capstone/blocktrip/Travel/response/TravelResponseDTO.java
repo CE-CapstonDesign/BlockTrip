@@ -46,6 +46,7 @@ public class TravelResponseDTO {
         private String name;
         private String latitude;
         private String longitude;
+        private String time;
     }
 
     private List<Flight> flightList;
