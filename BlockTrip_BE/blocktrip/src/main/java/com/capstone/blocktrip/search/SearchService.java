@@ -91,7 +91,7 @@ public class SearchService {
         System.out.println("디버깅용 location: " + location);
 
         // Google Maps API 키
-        String apiKey = "AIzaSyC7kIg8sg-LwBQKr8vvMDRei8LbEtghA4o";
+        String apiKey = "";
 
         // 사용자로부터 지역과 검색어 입력 받기
 
@@ -117,7 +117,7 @@ public class SearchService {
         String location = myLocation;
 
         // Google Maps API 키
-        String apiKey = "AIzaSyC7kIg8sg-LwBQKr8vvMDRei8LbEtghA4o";
+        String apiKey = "";
 
         // 사용자로부터 지역과 검색어 입력 받기
 
