@@ -34,13 +34,6 @@ public class TravelResponseDTO {
         private String longitude;
     }
 
-    /*@Data
-    public static class Restaurant {
-        private String name;
-        private String latitude;
-        private String longitude;
-    }*/
-
     @Data
     public static class Place {
         private String name;
