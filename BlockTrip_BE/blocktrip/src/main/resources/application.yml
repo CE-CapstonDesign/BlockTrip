@@ -9,4 +9,4 @@ spring:
         - dev-db
         - dev-gmap
         - dev-gpt
-    active: dev
+    active: local
