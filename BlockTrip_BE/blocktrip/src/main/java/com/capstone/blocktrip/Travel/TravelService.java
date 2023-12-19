@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,22 +39,33 @@ public class TravelService {
         return combineResponses(restaurantResponse, placeResponse);
     }
 
+    private long calculateDaysBetween(String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate start = LocalDate.parse(startDate, formatter);
+        LocalDate end = LocalDate.parse(endDate, formatter);
+        return ChronoUnit.DAYS.between(start, end);
+    }
+
     private String createRestaurantPrompt(TravelRequest request) {
         TravelRequest.CommonRequest common = request.getCommon();
         TravelRequest.RestaurantRequest restaurant = request.getRestaurant();
         String foodTypes = String.join(", ", restaurant.getFoodType());
         String restaurantTypes = String.join(", ", restaurant.getRestaurantType());
 
+        long days = calculateDaysBetween(common.getDepartureDate(), common.getArrivalDate());
+        int numberOfPlaces = (int) (20 * days);
+
         return String.format(
                 "목적지: %s, 출발일: %s, 도착일: %s\n" +
                         "%s 지역에서 %s 요리를 제공하는 %s 음식점을 추천해주세요.\n" +
-                        "목록 형식으로 최대 40개의 실제 존재하는 음식점를 제시해주세요. 각 음식점의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 only Comma(, )로만 구분해 나열해주세요. (예시: 광주형무소역사관, 아시아문화전당, 전남대학교, 광주황톳길)",
+                        "목록 형식으로 최대 %d개의 실제 존재하는 음식점를 제시해주세요. 각 음식점의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 only Comma(, )로만 구분해 나열해주세요. (예시: 광주형무소역사관, 아시아문화전당, 전남대학교, 광주황톳길)",
                 common.getDestinationLocation(),
                 common.getDepartureDate(),
                 common.getArrivalDate(),
                 common.getDestinationLocation(),
                 foodTypes,
-                restaurantTypes
+                restaurantTypes,
+                numberOfPlaces
         );
     }
 
@@ -61,16 +75,20 @@ public class TravelService {
         String interests = String.join(", ", place.getInterests());
         String travelStyles = String.join(", ", place.getTravelStyle());
 
+        long days = calculateDaysBetween(common.getDepartureDate(), common.getArrivalDate());
+        int numberOfPlaces = (int) (20 * days);
+
         return String.format(
                 "목적지: %s, 출발일: %s, 도착일: %s\n" +
                         "%s 지역에서 %s 스타일의 여행에 적합한 관광지를 추천해주세요. 관심사는 다음과 같습니다: %s\n" +
-                        "목록 형식으로 최대 40개의 관광지를 제시해주세요. 각 관광지의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 Comma(, )로만 구분해 나열해주세요. (예시: 일식당, 데미안, 일본삼시세끼, 일알리스)",
+                        "목록 형식으로 최대 %d개의 관광지를 제시해주세요. 각 관광지의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 Comma(, )로만 구분해 나열해주세요. (예시: 일식당, 데미안, 일본삼시세끼, 일알리스)",
                 common.getDestinationLocation(),
                 common.getDepartureDate(),
                 common.getArrivalDate(),
                 common.getDestinationLocation(),
                 travelStyles,
-                interests
+                interests,
+                numberOfPlaces
         );
     }
 
