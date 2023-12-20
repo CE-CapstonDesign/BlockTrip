@@ -6,3 +6,8 @@ export const SEAT = {
   비즈니스석: "c",
   일등석: "f",
 };
+
+export const FLIGHT_METHOD = {
+  ONEWAY: "편도",
+  ROUNDTRIP: "왕복",
+};
