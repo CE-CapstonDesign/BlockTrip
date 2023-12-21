@@ -1,7 +1,7 @@
 import { Wrapper } from "@googlemaps/react-wrapper";
 
 const Hotel = ({ data }) => {
-  const hotel = data.name;
+  const hotel = data.name.replace("&", "");
 
   return (
     <div className="py-12 px-24">
