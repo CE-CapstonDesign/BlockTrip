@@ -9,10 +9,9 @@ const Route = ({ data }) => {
     setFilter(el);
   };
 
-  const name = data[filter].flatMap((x) => x.name);
+  const name = data[filter].flatMap((x) => x.name.replace("&", ""));
   const len = name.length;
-  const route = name.slice(1, len - 2).join("|");
-  console.log(name);
+  const route = name.slice(1, len - 1).join("|");
 
   return (
     <div className="py-12 px-24">
