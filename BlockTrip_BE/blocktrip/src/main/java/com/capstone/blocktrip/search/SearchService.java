@@ -128,7 +128,7 @@ public class SearchService {
     private static PlacesSearchResponse searchNearbyPlaces(GeoApiContext context, LatLng location, String keyword) {
         try {
             PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, location)
-                    .radius(5000) // 반경 50km
+                    .radius(10000) // 반경 100km
                     .language("ko")
                     .keyword(keyword)
                     .await();
@@ -282,6 +282,8 @@ public class SearchService {
         travelResponseDTO.getFlightList().get(idx).setDepart(departureTime);
         travelResponseDTO.getFlightList().get(idx).setArrive(arrivalTime);
         travelResponseDTO.getFlightList().get(idx).setDuration(duration);
+        travelResponseDTO.getFlightList().get(idx).setDepartDate(departDate);
+        travelResponseDTO.getFlightList().get(idx).setRegion(depart);
 
     }
 
@@ -351,6 +353,7 @@ public class SearchService {
             crawlingFlight(flightDepart, flightArrive, flightDepartDate, flightDepartDate,flightFype,flightSeatClass,flightQuantity,flightChildQuantity,flightBabyQuantity , travelResponseDTO, 0);
             // 여행지로 도착하는 항공권 크롤링
             crawlingFlight(flightArrive, flightDepart, flightArriveDate, flightArriveDate,flightFype,flightSeatClass,flightQuantity,flightChildQuantity,flightBabyQuantity , travelResponseDTO, 1);
+
             crawlingHotel(hotelRegion, hotelCheckin, hotelCheckout, hotelSort,hotelAdult,hotelRoom,hotelChild, travelResponseDTO);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -371,16 +374,20 @@ public class SearchService {
         for(int i=0; i<travelPlan.getRecommendedRestaurants().size(); i++){
             if(mapSearchValid(destinationLocation,travelPlan.getRecommendedRestaurants().get(i))){
                 Coordinate restaurantCoordinate = getCoordinate(destinationLocation, travelPlan.getRecommendedRestaurants().get(i));
-                realRestaurant.add(restaurantCoordinate);
-                System.out.println("Restaurant 추가되었습니다!: " + restaurantCoordinate.getName() + "위도와 경도: " + restaurantCoordinate.getLatitude() + ", " + restaurantCoordinate.getLongitude());
+                if(restaurantCoordinate.getName() != null) {
+                    realRestaurant.add(restaurantCoordinate);
+                    System.out.println("Restaurant 추가되었습니다!: " + restaurantCoordinate.getName() + "위도와 경도: " + restaurantCoordinate.getLatitude() + ", " + restaurantCoordinate.getLongitude());
+                }
             }
         }
         // 관광명소 할루시네이션 처리
         for(int i=0; i<travelPlan.getRecommendedPlaces().size(); i++){
             if(mapSearchValid(destinationLocation,travelPlan.getRecommendedPlaces().get(i))){
                 Coordinate placeCoordinate = getCoordinate(destinationLocation, travelPlan.getRecommendedPlaces().get(i));
-                realPlace.add(placeCoordinate);
-                System.out.println("Place 추가되었습니다!: " + placeCoordinate.getName() + "위도와 경도: " + placeCoordinate.getLatitude() + ", " + placeCoordinate.getLongitude());
+                if(placeCoordinate.getName() != null) {
+                    realPlace.add(placeCoordinate);
+                    System.out.println("Place 추가되었습니다!: " + placeCoordinate.getName() + "위도와 경도: " + placeCoordinate.getLatitude() + ", " + placeCoordinate.getLongitude());
+                }
             }
         }
 
@@ -406,6 +413,7 @@ public class SearchService {
             }
         }
         catch (Exception e){
+            System.out.println("에러 원인: " + e.getMessage());
             throw new Exception500("서버에서 처리 과정 중 오류가 발생하였습니다.");
         }
 

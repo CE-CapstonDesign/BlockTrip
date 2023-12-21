@@ -17,6 +17,7 @@ public class TravelResponseDTO {
 
     @Data
     public static class Flight {
+        private String region;
         private String flightname;
         private String price;
         private String depart;
@@ -24,6 +25,7 @@ public class TravelResponseDTO {
         private String duration;
         private String latitude;
         private String longitude;
+        private String departDate;
     }
 
     @Data
