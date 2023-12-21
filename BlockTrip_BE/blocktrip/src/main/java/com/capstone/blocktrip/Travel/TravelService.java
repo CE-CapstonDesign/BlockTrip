@@ -56,9 +56,9 @@ public class TravelService {
         int numberOfPlaces = (int) (20 * days);
 
         return String.format(
-                "목적지: %s, 출발일: %s, 도착일: %s\n" +
-                        "%s 지역에서 %s 요리를 제공하는 %s 음식점을 추천해주세요.\n" +
-                        "목록 형식으로 최대 %d개의 실제 존재하는 음식점를 제시해주세요. 각 음식점의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 only Comma(, )로만 구분해 나열해주세요. (예시: 광주형무소역사관, 아시아문화전당, 전남대학교, 광주황톳길)",
+                "destination: %s, depart Date: %s, arrive date: %s\n" +
+                        "region: %s food type %s please recommend restaurant topic %s .\n" +
+                        "Please present up to %s actual restaurants in english in a list format. Please provide only the name of each restaurant, please never never use newlines or dot, and list them separated by only commas (, ) as shown in the example. (Examples: Gwangju Prison History Museum, Asia Culture Center, Chonnam National University, Gwangju Red Clay Road)",
                 common.getDestinationLocation(),
                 common.getDepartureDate(),
                 common.getArrivalDate(),
@@ -79,9 +79,9 @@ public class TravelService {
         int numberOfPlaces = (int) (20 * days);
 
         return String.format(
-                "목적지: %s, 출발일: %s, 도착일: %s\n" +
-                        "%s 지역에서 %s 스타일의 여행에 적합한 관광지를 추천해주세요. 관심사는 다음과 같습니다: %s\n" +
-                        "목록 형식으로 최대 %d개의 관광지를 제시해주세요. 각 관광지의 이름만 제공하고, newline을 절대 사용하지 말고 이를 예시와 같이 쉼표 Comma(, )로만 구분해 나열해주세요. (예시: 일식당, 데미안, 일본삼시세끼, 일알리스)",
+                "destination: %s, depart Date: %s, arrive date: %s\n" +
+                        "region: %s my style: %s style. my interest: %s  please recommend attractions.\n" +
+                        "Please present up to %s tourist attractions in english in a list format. Please provide only the name of each tourist attraction, please never never use newlines or dot, and list them separated only by commas (, ) as shown in the example. (Ex: sushi, udon, yakitori, hambuger)",
                 common.getDestinationLocation(),
                 common.getDepartureDate(),
                 common.getArrivalDate(),
@@ -96,6 +96,8 @@ public class TravelService {
         TravelResponse response = new TravelResponse();
         response.setRecommendedRestaurants(parseResponse(restaurantResponse));
         response.setRecommendedPlaces(parseResponse(placeResponse));
+        System.out.println("디버깅 getRecommendedPlaces: " + response.getRecommendedPlaces());
+        System.out.println("디버깅 getRecommendedRestaurants: " + response.getRecommendedRestaurants());
         return response;
     }
 
@@ -110,6 +112,8 @@ public class TravelService {
                     JsonNode messageNode = choice.path("message");
                     if (!messageNode.isMissingNode()) {
                         String content = messageNode.path("content").asText();
+                        content = content.replaceAll("\n", ",");
+                        content = content.replaceAll("\\d+\\.\\s*", "");
                         String[] items = content.split(",");
                         for (String item : items) {
                             results.add(item.trim());
