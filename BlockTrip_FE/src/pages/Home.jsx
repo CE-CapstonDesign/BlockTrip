@@ -39,7 +39,6 @@ const Home = () => {
       },
     });
   };
-  if (mutation.isLoading) console.log("hi");
 
   const onSubmit = (data) => {
     const flight = data.flighttype === "왕복" ? "ow" : "rt";
@@ -91,7 +90,10 @@ const Home = () => {
           <img src={logoWhite} className="w-48" />
           <div className="flex flex-col justify-start pl-16 mx-0 my-72">
             <img src={title} className="w-[40rem]" />
-            <a href="#travelInfo" className="w-16">
+            <a
+              href="#travelInfo"
+              className="w-16 hover:duration-100 hover:w-20"
+            >
               <img
                 src={downArrow}
                 className="w-16 mt-10 cursor-pointer hover:duration-100 hover:w-20"
@@ -121,7 +123,7 @@ const Home = () => {
                 <img
                   src={arrow}
                   alt="show-result"
-                  className="w-[12rem] p-10 mr-40"
+                  className="w-[12rem] p-10 mr-40 hover:duration-100 hover:w-[14rem] mb-10"
                 />
               </button>
             </div>
