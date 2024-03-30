@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import routes from "./routes";
-import Home from "./pages/Home";
-import Travel from "./pages/Travel";
-import Blank from "./pages/Blank";
-import Loader from "./components/common/Loader";
+import { Home } from "./components/pages/Home";
+import { Travel } from "./components/pages/Travel";
+import { Error } from "./components/pages/Error";
+import { Loader } from "./components/features/Loader";
 import { useState } from "react";
 import instance from "./services/index";
 
@@ -45,7 +45,7 @@ function App() {
       <Routes>
         <Route path={routes.home} element={<Home />} />
         <Route path={routes.result} element={<Travel />} />
-        <Route path={routes.blank} element={<Blank />} />
+        <Route path={routes.blank} element={<Error />} />
       </Routes>
     </BrowserRouter>
   );
