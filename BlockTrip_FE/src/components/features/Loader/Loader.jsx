@@ -1,6 +1,6 @@
-import "../../style/Loader.css";
+import "./Loader.css";
 
-const Loader = () => {
+export const Loader = () => {
   return (
     <div className="flex flex-col justify-center items-center h-[100vh]">
       <p className="mt-[15rem] text-xl">최적의 여행 경로를 찾고 있습니다.</p>
@@ -54,5 +54,3 @@ const Loader = () => {
     </div>
   );
 };
-
-export default Loader;
