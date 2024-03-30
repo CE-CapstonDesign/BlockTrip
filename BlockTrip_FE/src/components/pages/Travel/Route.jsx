@@ -1,6 +1,6 @@
 import { Wrapper } from "@googlemaps/react-wrapper";
 import { useState } from "react";
-import Button from "../common/Button";
+import Button from "@/components/features/ui/Button";
 
 const Route = ({ data }) => {
   const [filter, setFilter] = useState(0);
@@ -14,7 +14,7 @@ const Route = ({ data }) => {
   const route = name.slice(1, len - 1).join("|");
 
   return (
-    <div className="py-12 px-24">
+    <div>
       <p className="text-neutral-500 text-3xl mb-4">여행 계획 안내</p>
       {Array.from({ length: data.length }, (_, i) => (
         <Button key={i} onClick={() => handleOnClick(i)} active={filter === i}>

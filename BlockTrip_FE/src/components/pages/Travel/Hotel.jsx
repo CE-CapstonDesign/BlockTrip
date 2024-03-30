@@ -4,7 +4,7 @@ const Hotel = ({ data }) => {
   const hotel = data.name.replace("&", "");
 
   return (
-    <div className="py-12 px-24">
+    <div>
       <p className="text-neutral-500 text-3xl mb-8">숙박 정보</p>
       <div className="flex text-xl">
         <div className="text-neutral-500 leading-10">

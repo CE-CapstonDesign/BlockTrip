@@ -1,6 +1,6 @@
 const Flight = ({ data }) => {
   return (
-    <div className="py-12 px-24">
+    <div>
       <p className="text-neutral-500 text-3xl mb-10">항공권 정보</p>
       <div className="flex">
         <div className="flex text-xl mr-44">
