@@ -1,20 +1,20 @@
-import TravelInfo from "../components/CategoryInput/TravelInfo";
+import TravelInfo from "../../CategoryInput/TravelInfo";
 import logoWhite from "/logo-white.png";
 import title from "/title.png";
 import downArrow from "/down-arrow.png";
-import FlightInfo from "../components/CategoryInput/FlightInfo";
-import HotelInfo from "../components/CategoryInput/HotelInfo";
-import Taste from "../components/CategoryInput/Taste";
-import Food from "../components/CategoryInput/Food";
+import FlightInfo from "../../CategoryInput/FlightInfo";
+import HotelInfo from "../../CategoryInput/HotelInfo";
+import Taste from "../../CategoryInput/Taste";
+import Food from "../../CategoryInput/Food";
 import arrow from "/arrow.png";
-import routes from "../routes";
+import routes from "../../../routes";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { travelPlan } from "../services/travel";
+import { travelPlan } from "../../../services/travel";
 import { useForm, FormProvider } from "react-hook-form";
-import { LOCATION } from "../constants/location";
-import { HOTEL } from "../constants/hotel";
-import { SEAT } from "../constants/flight";
+import { LOCATION } from "../../../constants/location";
+import { HOTEL } from "../../../constants/hotel";
+import { SEAT } from "../../../constants/flight";
 import { useState } from "react";
 
 const Home = () => {
