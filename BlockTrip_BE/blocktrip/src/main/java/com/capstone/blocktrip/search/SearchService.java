@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @EnableConfigurationProperties
@@ -232,9 +234,40 @@ public class SearchService {
 
         ChromeDriver driver = new ChromeDriver(options);
 
+        // Google Maps에서 공항 약자를 가지고 옵니다.
+        String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s",depart,dest);
+
+        driver.get(googleMaps);
+        WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
+        WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
+        String flightInfoText = spanElement.getText();
+
+        // 항공편 정보 출력
+        System.out.println("공항 약자 정보: " + flightInfoText);
+        // 정규표현식 패턴 설정
+        Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
+
+        // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
+        Matcher matcher = pattern.matcher(flightInfoText);
+
+        // A공항과 B공항을 저장할 변수 초기화
+        String departure = null;
+        String destination = null;
+
+        // 매칭된 부분을 반복하여 추출
+        int i = 0;
+        while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
+            if (i == 0) {
+                departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
+            } else {
+                destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
+            }
+            i++;
+        }
+
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
         String url = String.format("https://kr.trip.com/flights/%s-to-%s/tickets-sel-dad?dcity=%s&acity=%s&ddate=%s&rdate=%s&flighttype=%s&class=%s&lowpricesource=searchform&quantity=%s&childqty=%s&childqty=%s&searchboxarg=t",
-                depart, dest, depart,dest,departDate, destDate,flightType,seatClass,quantity,childqty,babyqty);
+                departure, destination, departure,destination,departDate, destDate,flightType,seatClass,quantity,childqty,babyqty);
 
         driver.get(url);
 
@@ -245,20 +278,20 @@ public class SearchService {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(8));
 
         // 최저가 항공권의 가격을 추출하기 위한 CSS 선택자 "[class="item-con-price"] span"
-        WebElement priceElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class=\"item-con-price\"] span")));
+        WebElement priceElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("[class^=\"item-con-price_\"]")));
 
         // 항공권의 출발/도착 시간을 추출하기 위한 CSS 선택자 ".flight-info-airline__timer_RWx"
-        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector("[class^=\"flight-info-airline__timer\"]"));
+        List<WebElement> flightInfoElements = driver.findElements(By.cssSelector("[class^=\"flight-info-airline__timers\"]"));
 
         List<WebElement> flightNameElements = driver.findElements(By.cssSelector("[class^=\"flights-name\"]"));
 
 
         // 최저가 항공권의 출발 시간을 추출합니다.
-        WebElement timeElement = flightInfoElements.get(0).findElement(By.cssSelector(".time"));
+        WebElement timeElement = flightInfoElements.get(0).findElement(By.cssSelector("[class^=\"time_\"]"));
         String departureTime = timeElement.getText();
 
         // 최저가 항공권의 도착 시간을 추출합니다.
-        WebElement timeElement2 = flightInfoElements.get(1).findElement(By.cssSelector(".time"));
+        WebElement timeElement2 = flightInfoElements.get(1).findElement(By.cssSelector("[class^=\"time_\"]"));
         String arrivalTime = timeElement2.getText();
 
         // 최저가 항공권의 항공편 이름을 추출합니다.
