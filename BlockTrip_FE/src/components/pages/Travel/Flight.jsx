@@ -1,5 +1,6 @@
 const Flight = ({ data }) => {
   return (
+    //TODO: 구조 변경 (그리드 사용)
     <div>
       <p className="text-neutral-500 text-3xl mb-10">항공권 정보</p>
       <div className="flex">
