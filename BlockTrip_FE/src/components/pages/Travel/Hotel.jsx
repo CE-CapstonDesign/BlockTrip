@@ -1,7 +1,22 @@
+import { getAddressFromLatLng } from "@/utils/getAddressFromLatLng";
 import { Wrapper } from "@googlemaps/react-wrapper";
+import { useState } from "react";
+import { setKey, setLanguage, setRegion } from "react-geocode";
+
+setKey(import.meta.env.VITE_GOOGLE_KEY);
+setLanguage("ko");
+setRegion("es");
 
 const Hotel = ({ data }) => {
+  const [hotelAddress, setHotelAddress] = useState("");
   const hotel = data.name.replace("&", "");
+
+  const getAddress = async () => {
+    const address = await getAddressFromLatLng(data.latitude, data.longitude);
+    setHotelAddress(address);
+  };
+
+  getAddress();
 
   return (
     <div>
@@ -14,10 +29,7 @@ const Hotel = ({ data }) => {
         </div>
         <div className="ml-10 leading-10">
           <p>{data.name}</p>
-          <p>
-            {`${data.latitude}
-            ${data.longitude}`}
-          </p>
+          <p>{hotelAddress}</p>
           <p>{data.price}</p>
         </div>
       </div>
