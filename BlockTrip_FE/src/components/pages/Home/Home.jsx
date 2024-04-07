@@ -1,23 +1,23 @@
-import TravelInfo from "../../CategoryInput/TravelInfo";
+import TravelInfo from "./TravelInfo";
 import logoWhite from "/logo-white.png";
 import title from "/title.png";
 import downArrow from "/down-arrow.png";
-import FlightInfo from "../../CategoryInput/FlightInfo";
-import HotelInfo from "../../CategoryInput/HotelInfo";
-import Taste from "../../CategoryInput/Taste";
-import Food from "../../CategoryInput/Food";
+import FlightInfo from "./FlightInfo";
+import HotelInfo from "./HotelInfo";
+import TasteInfo from "./TasteInfo";
+import FoodInfo from "./FoodInfo";
 import arrow from "/arrow.png";
-import routes from "../../../routes";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { travelPlan } from "../../../services/travel";
 import { useForm, FormProvider } from "react-hook-form";
-import { LOCATION } from "../../../constants/location";
-import { HOTEL } from "../../../constants/hotel";
-import { SEAT } from "../../../constants/flight";
 import { useState } from "react";
+import routes from "@/routes";
+import { LOCATION } from "@/constants/location";
+import { HOTEL } from "@/constants/hotel";
+import { SEAT } from "@/constants/flight";
+import { travelPlan } from "@/services/travel";
 
-const Home = () => {
+export const Home = () => {
   const navigate = useNavigate();
 
   const methods = useForm();
@@ -103,20 +103,12 @@ const Home = () => {
         </div>
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="px-56 py-24">
-              <TravelInfo id="travelInfo" />
-              <div className="mt-24">
-                <FlightInfo />
-              </div>
-              <div className="mt-24">
-                <HotelInfo />
-              </div>
-              <div className="mt-24">
-                <Taste />
-              </div>
-              <div className="mt-24">
-                <Food />
-              </div>
+            <div className="px-56 pt-5 pb-16 [&>*]:mt-28" id="travelInfo">
+              <TravelInfo />
+              <FlightInfo />
+              <HotelInfo />
+              <TasteInfo />
+              <FoodInfo />
             </div>
             <div className="flex justify-end items-end">
               <button type="button" onClick={handleOnClick}>
@@ -133,5 +125,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
