@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FLIGHT_METHOD, SEAT } from "../../../constants/flight";
 import flight from "/flight.png";
 import { useFormContext, Controller } from "react-hook-form";
 import Counter from "@/components/features/ui/Counter";
@@ -7,6 +6,7 @@ import Label from "@/components/features/ui/Label";
 import SelectInput from "@/components/features/ui/SelectInput";
 import Title from "@/components/features/ui/Title";
 import ToggleBtn from "@/components/features/ui/ToggleBtn";
+import { FLIGHT_METHOD, SEAT } from "@/constants/flight";
 
 const FlightInfo = () => {
   const { register, control } = useFormContext();

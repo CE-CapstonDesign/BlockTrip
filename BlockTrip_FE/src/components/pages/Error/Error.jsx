@@ -1,4 +1,4 @@
-import Header from "../../features/ui/Header";
+import Header from "@/components/features/ui/Header";
 import { useNavigate } from "react-router-dom";
 
 export const Error = () => {
