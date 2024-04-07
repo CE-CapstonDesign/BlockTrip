@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { RESTAURANT, FOOD } from "../../constants/food";
-import Button from "../common/Button";
-import Label from "../common/Label";
-import Title from "../common/Title";
 import interest from "/interest.png";
 import { useFormContext } from "react-hook-form";
+import Button from "@/components/features/ui/Button";
+import Label from "@/components/features/ui/Label";
+import Title from "@/components/features/ui/Title";
+import { FOOD, RESTAURANT } from "@/constants/food";
 
-const Food = () => {
+const FoodInfo = () => {
   const { register, setValue } = useFormContext();
 
   const [prefer, setPrefer] = useState([]);
@@ -44,8 +44,8 @@ const Food = () => {
   return (
     <div>
       <Title src={interest}>음식</Title>
-      <div className="flex items-center">
-        <div className="mr-20">
+      <section className="flex items-center [&_article]:mr-20">
+        <article>
           <Label htmlFor="departures">식품 종류</Label>
           <div className="w-[26rem]">
             {FOOD.map((el, idx) => (
@@ -58,9 +58,9 @@ const Food = () => {
               </Button>
             ))}
           </div>
-        </div>
+        </article>
 
-        <div className="mr-20">
+        <article>
           <Label htmlFor="departures">음식점 종류</Label>
           <div className="w-[28rem]">
             {RESTAURANT.map((el, idx) => (
@@ -73,10 +73,10 @@ const Food = () => {
               </Button>
             ))}
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
     </div>
   );
 };
 
-export default Food;
+export default FoodInfo;

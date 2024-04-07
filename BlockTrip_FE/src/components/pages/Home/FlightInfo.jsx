@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { FLIGHT_METHOD, SEAT } from "../../constants/flight";
-import Counter from "../common/Counter";
-import Label from "../common/Label";
-import SelectInput from "../common/SelectInput";
-import Title from "../common/Title";
+import { FLIGHT_METHOD, SEAT } from "../../../constants/flight";
 import flight from "/flight.png";
-import ToogleBtn from "../common/ToggleBtn";
 import { useFormContext, Controller } from "react-hook-form";
+import Counter from "@/components/features/ui/Counter";
+import Label from "@/components/features/ui/Label";
+import SelectInput from "@/components/features/ui/SelectInput";
+import Title from "@/components/features/ui/Title";
+import ToggleBtn from "@/components/features/ui/ToggleBtn";
 
 const FlightInfo = () => {
   const { register, control } = useFormContext();
@@ -36,14 +36,14 @@ const FlightInfo = () => {
   };
 
   return (
-    <>
-      <div className="flex items-start">
+    <section className="[&_article]:flex [&_article]:items-start">
+      <article>
         <Title src={flight}>항공권</Title>
         <Controller
           control={control}
           name="flighttype"
           render={({ field: { onChange } }) => (
-            <ToogleBtn
+            <ToggleBtn
               checked={isRoundtrip}
               onChange={() => {
                 handleToggleFlightMethod();
@@ -53,10 +53,10 @@ const FlightInfo = () => {
             />
           )}
         />
-      </div>
+      </article>
 
-      <div className="flex items-start">
-        <div className="mr-20">
+      <article className="[&>div]:mr-20">
+        <div>
           <Controller
             control={control}
             name="adult"
@@ -110,7 +110,7 @@ const FlightInfo = () => {
           />
         </div>
 
-        <div className="mr-20">
+        <div>
           <Label htmlFor="departures">좌석</Label>
           <SelectInput
             id="departures"
@@ -119,8 +119,8 @@ const FlightInfo = () => {
             register={register("class")}
           />
         </div>
-      </div>
-    </>
+      </article>
+    </section>
   );
 };
 
