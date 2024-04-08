@@ -1,3 +1,10 @@
+export const TRANSPORTATION_TYPE = {
+  transit: "대중교통",
+  driving: "자동차",
+  bicycling: "자전거",
+  walking: "도보",
+};
+
 export const LOCATION = {
   서울: "sel",
   광주: "kwj",

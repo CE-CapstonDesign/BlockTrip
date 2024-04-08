@@ -1,10 +1,25 @@
+import { getAddressFromLatLng } from "@/utils/getAddressFromLatLng";
 import { Wrapper } from "@googlemaps/react-wrapper";
+import { useState } from "react";
+import { setKey, setLanguage, setRegion } from "react-geocode";
+
+setKey(import.meta.env.VITE_GOOGLE_KEY);
+setLanguage("ko");
+setRegion("es");
 
 const Hotel = ({ data }) => {
+  const [hotelAddress, setHotelAddress] = useState("");
   const hotel = data.name.replace("&", "");
 
+  const getAddress = async () => {
+    const address = await getAddressFromLatLng(data.latitude, data.longitude);
+    setHotelAddress(address);
+  };
+
+  getAddress();
+
   return (
-    <div className="py-12 px-24">
+    <div>
       <p className="text-neutral-500 text-3xl mb-8">숙박 정보</p>
       <div className="flex text-xl">
         <div className="text-neutral-500 leading-10">
@@ -14,10 +29,7 @@ const Hotel = ({ data }) => {
         </div>
         <div className="ml-10 leading-10">
           <p>{data.name}</p>
-          <p>
-            {`${data.latitude}
-            ${data.longitude}`}
-          </p>
+          <p>{hotelAddress}</p>
           <p>{data.price}</p>
         </div>
       </div>

@@ -1,7 +1,8 @@
 const Input = ({ className, register, ...inputProps }) => {
   return (
     <input
-      className={`border-b-2 border-gray text-lg ${className}`}
+      autoFocus
+      className={`border-b-2 border-gray text-lg focus:outline-none ${className}`}
       {...register}
       {...inputProps}
     />

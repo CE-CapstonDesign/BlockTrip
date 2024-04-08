@@ -1,12 +1,12 @@
-import { STYLE, INTEREST } from "../../constants/taste";
-import Button from "../common/Button";
-import Label from "../common/Label";
-import Title from "../common/Title";
+import Button from "@/components/features/ui/Button";
 import interest from "/interest.png";
 import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
+import Label from "@/components/features/ui/Label";
+import Title from "@/components/features/ui/Title";
+import { INTEREST, STYLE } from "@/constants/taste";
 
-const Taste = () => {
+const TasteInfo = () => {
   const { register, setValue } = useFormContext();
 
   const [interests, setInterests] = useState([]);
@@ -44,8 +44,8 @@ const Taste = () => {
   return (
     <div>
       <Title src={interest}>여행 스타일</Title>
-      <div className="flex items-center">
-        <div className="mr-20">
+      <section className="flex items-center [&_article]:mr-20">
+        <article>
           <Label htmlFor="departures">여행 스타일</Label>
           <div className="w-[26rem]">
             {STYLE.map((el, idx) => (
@@ -58,9 +58,9 @@ const Taste = () => {
               </Button>
             ))}
           </div>
-        </div>
+        </article>
 
-        <div className="mr-20">
+        <article>
           <Label htmlFor="departures">관심있는</Label>
           <div className="w-[26rem]">
             {INTEREST.map((el, idx) => (
@@ -73,10 +73,10 @@ const Taste = () => {
               </Button>
             ))}
           </div>
-        </div>
-      </div>
+        </article>
+      </section>
     </div>
   );
 };
 
-export default Taste;
+export default TasteInfo;

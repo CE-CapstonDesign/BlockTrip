@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { HOTEL } from "../../constants/hotel";
-import Counter from "../common/Counter";
-import Label from "../common/Label";
-import SelectInput from "../common/SelectInput";
-import Title from "../common/Title";
 import hotel from "/hotel.png";
 import { useFormContext, Controller } from "react-hook-form";
+import { HOTEL } from "@/constants/hotel";
+import Counter from "@/components/features/ui/Counter";
+import Label from "@/components/features/ui/Label";
+import SelectInput from "@/components/features/ui/SelectInput";
+import Title from "@/components/features/ui/Title";
 
 const HotelInfo = () => {
   const { register, control } = useFormContext();
@@ -19,8 +19,8 @@ const HotelInfo = () => {
   return (
     <div>
       <Title src={hotel}>숙박</Title>
-      <div className="flex items-start">
-        <div className="mr-20">
+      <section className="flex items-start [&_article]:mr-20">
+        <article>
           <Label htmlFor="departures">정렬</Label>
           <SelectInput
             id="departures"
@@ -28,9 +28,9 @@ const HotelInfo = () => {
             list={Object.keys(HOTEL)}
             register={register("sort")}
           />
-        </div>
+        </article>
 
-        <div className="mr-20">
+        <article>
           <Label htmlFor="people">방 개수</Label>
           <Controller
             control={control}
@@ -47,8 +47,8 @@ const HotelInfo = () => {
               />
             )}
           />
-        </div>
-      </div>
+        </article>
+      </section>
     </div>
   );
 };
