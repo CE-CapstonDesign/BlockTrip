@@ -12,10 +12,10 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm, FormProvider } from "react-hook-form";
 import { useState } from "react";
 import routes from "@/routes";
-import { LOCATION } from "@/constants/location";
 import { HOTEL } from "@/constants/hotel";
 import { SEAT } from "@/constants/flight";
 import { travelPlan } from "@/services/travel";
+import { Error } from "../Error";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -31,11 +31,10 @@ export const Home = () => {
   const handleOnClick = () => {
     mutation.mutate(request, {
       onSuccess: () => {
-        console.log("success");
         navigate(routes.result);
       },
       onError: (error) => {
-        console.error(error);
+        return <Error error={error} />;
       },
     });
   };
@@ -66,8 +65,8 @@ export const Home = () => {
         sort: HOTEL[data.sort],
       },
       flight: {
-        depart: LOCATION[data.depart],
-        arrive: LOCATION[data.destinationLocation],
+        depart: data.depart,
+        arrive: data.destinationLocation,
         departDate: data.departureDate,
         arriveDate: data.arrivalDate,
         flighttype: flight || "ow",
@@ -78,8 +77,6 @@ export const Home = () => {
       },
     };
 
-    console.log("data: ", data);
-    console.log("request:", request);
     setRequest(request);
   };
 
@@ -114,7 +111,7 @@ export const Home = () => {
               <button type="button" onClick={handleOnClick}>
                 <img
                   src={arrow}
-                  alt="show-result"
+                  alt="show result"
                   className="w-[12rem] p-10 mr-40 hover:duration-100 hover:w-[14rem] mb-10"
                 />
               </button>
