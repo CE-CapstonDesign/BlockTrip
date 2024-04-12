@@ -1,62 +1,28 @@
 import { Wrapper } from "@googlemaps/react-wrapper";
-import { useEffect, useState } from "react";
-import Button from "@/components/features/ui/Button";
+import { useState } from "react";
+import { Button } from "@/components/features/ui";
 import { setKey, setLanguage, setRegion } from "react-geocode";
 import { TRANSPORTATION_TYPE } from "@/constants/location";
-import { getAddressFromLatLng } from "@/utils/getAddressFromLatLng";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
 setLanguage("en");
 setRegion("es");
 
 const Route = ({ data }) => {
+  const basicTransportation = Object.keys(TRANSPORTATION_TYPE)[0];
   const [filter, setFilter] = useState(0);
-  const [transportation, setTransportation] = useState("transit");
-  const [travelRoute, setTravelRoute] = useState([]);
-  const [terminal, setTerminal] = useState([]);
+  const [transportation, setTransportation] = useState(basicTransportation);
 
-  const name = data[filter].flatMap((x) => x.name.replace("&", ""));
+  const name = data[filter].flatMap((x) => x.name.replace("&", "+"));
   const len = name.length;
 
-  useEffect(() => {
-    const getTerminal = async () => {
-      const origin = await getAddressFromLatLng(
-        data[filter][0].latitude,
-        data[filter][0].longitude
-      );
+  const locationInfo =
+    len > 2
+      ? data[filter].slice(1, len - 1).map((x) => [x.latitude, x.longitude])
+      : null;
 
-      const destination = await getAddressFromLatLng(
-        data[filter][len - 1].latitude,
-        data[filter][len - 1].longitude
-      );
-      setTerminal([
-        origin.replaceAll(" ", "+"),
-        destination.replaceAll(" ", "+"),
-      ]);
-    };
+  const route = locationInfo?.map((x) => x.join(",")).join("|");
 
-    getTerminal();
-  }, [data, filter, len]);
-
-  useEffect(() => {
-    const getAddress = async () => {
-      const promises = data[filter].map(async (item) => {
-        const dayTravelRoute = await getAddressFromLatLng(
-          item.latitude,
-          item.longitude
-        );
-        return dayTravelRoute;
-      });
-
-      const allTravelRoutes = await Promise.all(promises);
-      setTravelRoute(allTravelRoutes);
-    };
-
-    getAddress();
-  }, [data, filter]);
-
-  // TODO: 지원안되는 교통수단 빼기
-  const route = travelRoute.slice(1, len - 1).join("|");
   return (
     <div>
       <p className="text-neutral-500 text-3xl mb-4">여행 계획 안내</p>
@@ -93,7 +59,7 @@ const Route = ({ data }) => {
         <Wrapper>
           <iframe
             className="ml-48"
-            width="500px"
+            width="550px"
             height="500px"
             src={`https://www.google.com/maps/embed/v1/directions?key=${
               import.meta.env.VITE_GOOGLE_KEY
@@ -101,7 +67,9 @@ const Route = ({ data }) => {
               data[filter][0].longitude
             }&destination=${data[filter][len - 1].latitude},${
               data[filter][len - 1].longitude
-            }&zoom=13&mode=${transportation}`}
+            }&zoom=13${
+              route ? `&waypoints=${route}` : ""
+            }&mode=${transportation}`}
           />
         </Wrapper>
       </div>

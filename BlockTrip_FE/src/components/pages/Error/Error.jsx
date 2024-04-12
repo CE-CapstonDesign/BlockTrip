@@ -1,7 +1,7 @@
-import Header from "@/components/features/ui/Header";
+import { Header } from "@/components/features/ui";
 import { useNavigate } from "react-router-dom";
 
-export const Error = () => {
+export const Error = ({ error }) => {
   const navigate = useNavigate();
 
   return (
@@ -9,7 +9,8 @@ export const Error = () => {
       <Header />
       <section className="flex flex-col justify-center items-center w-[100vw] h-[80vh]">
         <h1 className="text-5xl mb-6">ERROR</h1>
-        <p className="text-xl">요청이 잘못 되었습니다. 다시 입력해주세요.</p>
+        <p className="text-xl">에러가 발생했습니다. 관리자에게 문의하세요.</p>
+        <p className="text-sm">에러내용: {error}</p>
         <p
           className="text-green text-xl cursor-pointer"
           onClick={() => navigate("/")}

@@ -9,7 +9,7 @@ setRegion("es");
 
 const Hotel = ({ data }) => {
   const [hotelAddress, setHotelAddress] = useState("");
-  const hotel = data.name.replace("&", "");
+  // const hotel = data.name.replace(/&| /g, "+");
 
   const getAddress = async () => {
     const address = await getAddressFromLatLng(data.latitude, data.longitude);
@@ -40,7 +40,7 @@ const Hotel = ({ data }) => {
           height="300px"
           src={`https://www.google.com/maps/embed/v1/place?key=${
             import.meta.env.VITE_GOOGLE_KEY
-          }&q=${hotel}&zoom=12`}
+          }&q=${data.latitude}, ${data.longitude}&zoom=12`}
         />
       </Wrapper>
     </div>

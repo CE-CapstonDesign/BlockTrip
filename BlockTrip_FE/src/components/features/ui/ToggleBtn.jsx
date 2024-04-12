@@ -1,4 +1,4 @@
-const ToggleBtn = ({ value, onChange, checked, name }) => {
+export const ToggleBtn = ({ value, onChange, checked, name }) => {
   return (
     <label className="relative inline-flex items-center cursor-pointer mt-2 ml-6">
       <input
@@ -16,5 +16,3 @@ const ToggleBtn = ({ value, onChange, checked, name }) => {
     </label>
   );
 };
-
-export default ToggleBtn;

@@ -7,3 +7,8 @@ export const HOTEL = {
   "고평점 후기가 많은 순": "score",
   "booking.com 추천": "popularity",
 };
+
+export const ROOM_LIMIT = {
+  MIN: 1,
+  MAX: 8,
+};

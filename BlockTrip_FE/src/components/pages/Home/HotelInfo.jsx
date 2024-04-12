@@ -1,16 +1,13 @@
 import { useState } from "react";
 import hotel from "/hotel.png";
 import { useFormContext, Controller } from "react-hook-form";
-import { HOTEL } from "@/constants/hotel";
-import Counter from "@/components/features/ui/Counter";
-import Label from "@/components/features/ui/Label";
-import SelectInput from "@/components/features/ui/SelectInput";
-import Title from "@/components/features/ui/Title";
+import { HOTEL, ROOM_LIMIT } from "@/constants/hotel";
+import { Counter, Label, SelectInput, Title } from "@/components/features/ui";
 
 const HotelInfo = () => {
   const { register, control } = useFormContext();
 
-  const [number, setNumber] = useState(1);
+  const [number, setNumber] = useState(ROOM_LIMIT.MIN);
 
   const onNumberChange = (newNumber) => {
     setNumber(newNumber);
@@ -18,13 +15,14 @@ const HotelInfo = () => {
 
   return (
     <div>
-      <Title src={hotel}>숙박</Title>
+      <Title src={hotel} alt="hotel icon">
+        숙박
+      </Title>
       <section className="flex items-start [&_article]:mr-20">
         <article>
           <Label htmlFor="departures">정렬</Label>
           <SelectInput
             id="departures"
-            name="departures"
             list={Object.keys(HOTEL)}
             register={register("sort")}
           />
@@ -37,8 +35,8 @@ const HotelInfo = () => {
             name="room"
             render={({ field: { onChange } }) => (
               <Counter
-                min="1"
-                max="8"
+                min={ROOM_LIMIT.MIN}
+                max={ROOM_LIMIT.MAX}
                 value={number}
                 onNumberChange={(newNumber) => {
                   onNumberChange(newNumber);

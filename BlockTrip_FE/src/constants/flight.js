@@ -11,3 +11,9 @@ export const FLIGHT_METHOD = {
   ONEWAY: "편도",
   ROUNDTRIP: "왕복",
 };
+
+export const PEOPLE_LIMIT = {
+  MAX: 9,
+  MIN_ADULT: 1,
+  MIN: 0,
+};

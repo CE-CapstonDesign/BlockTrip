@@ -1,28 +1,30 @@
 import { useState } from "react";
 import flight from "/flight.png";
 import { useFormContext, Controller } from "react-hook-form";
-import Counter from "@/components/features/ui/Counter";
-import Label from "@/components/features/ui/Label";
-import SelectInput from "@/components/features/ui/SelectInput";
-import Title from "@/components/features/ui/Title";
-import ToggleBtn from "@/components/features/ui/ToggleBtn";
-import { FLIGHT_METHOD, SEAT } from "@/constants/flight";
+import {
+  Counter,
+  Label,
+  SelectInput,
+  Title,
+  ToggleBtn,
+} from "@/components/features/ui";
+import { FLIGHT_METHOD, SEAT, PEOPLE_LIMIT } from "@/constants/flight";
 
 const FlightInfo = () => {
   const { register, control } = useFormContext();
 
-  const [adult, setAdult] = useState(1);
-  const [child, setChild] = useState(0);
-  const [baby, setBaby] = useState(0);
+  const [adult, setAdult] = useState(PEOPLE_LIMIT.MIN_ADULT);
+  const [child, setChild] = useState(PEOPLE_LIMIT.MIN);
+  const [baby, setBaby] = useState(PEOPLE_LIMIT.MIN);
   const [method, setMethod] = useState(FLIGHT_METHOD.ONEWAY);
   const isRoundtrip = method === FLIGHT_METHOD.ROUNDTRIP;
 
   const onAdultChange = (newNumber) => {
-    if (adult + child < 9) setAdult(newNumber);
+    if (adult + child < PEOPLE_LIMIT.MAX) setAdult(newNumber);
   };
 
   const onChildChange = (newNumber) => {
-    if (adult + child < 9) setChild(newNumber);
+    if (adult + child < PEOPLE_LIMIT.MAX) setChild(newNumber);
   };
 
   const onBabyChange = (newNumber) => {
@@ -38,7 +40,9 @@ const FlightInfo = () => {
   return (
     <section className="[&_article]:flex [&_article]:items-start">
       <article>
-        <Title src={flight}>항공권</Title>
+        <Title src={flight} alt="flight icon">
+          항공권
+        </Title>
         <Controller
           control={control}
           name="flighttype"
@@ -64,8 +68,8 @@ const FlightInfo = () => {
               <Counter
                 section="성인"
                 description="만 12세 이상"
-                min="1"
-                max="9"
+                min={PEOPLE_LIMIT.MIN_ADULT}
+                max={PEOPLE_LIMIT.MAX}
                 value={adult}
                 onNumberChange={(newNumber) => {
                   onAdultChange(newNumber);
@@ -81,8 +85,8 @@ const FlightInfo = () => {
               <Counter
                 section="어린이"
                 description="만 2~11세"
-                min="1"
-                max="9"
+                min={PEOPLE_LIMIT.MIN_ADULT}
+                max={PEOPLE_LIMIT.MAX}
                 value={child}
                 onNumberChange={(newNumber) => {
                   onChildChange(newNumber);
@@ -98,8 +102,8 @@ const FlightInfo = () => {
               <Counter
                 section="유아"
                 description="생후 14일~만 1세"
-                min="1"
-                max="9"
+                min={PEOPLE_LIMIT.MIN_ADULT}
+                max={PEOPLE_LIMIT.MAX}
                 value={baby}
                 onNumberChange={(newNumber) => {
                   onBabyChange(newNumber);
@@ -114,7 +118,6 @@ const FlightInfo = () => {
           <Label htmlFor="departures">좌석</Label>
           <SelectInput
             id="departures"
-            name="class"
             list={Object.keys(SEAT)}
             register={register("class")}
           />

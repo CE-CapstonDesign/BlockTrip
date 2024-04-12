@@ -4,8 +4,7 @@ import Route from "./Route";
 import Detail from "./Detail";
 import { useQuery } from "@tanstack/react-query";
 import { travel } from "@/services/travel";
-import Header from "@/components/features/ui/Header";
-// import { data } from "@/mock/data";
+import { Header } from "@/components/features/ui";
 import { convertCityCodeToName } from "@/utils/convertCityCodeToName";
 
 export const Travel = () => {
@@ -15,8 +14,8 @@ export const Travel = () => {
     select: (data) => data?.data?.response,
   });
 
+  // TODO: 로더 만들기
   if (isLoading) console.log("isLoading...");
-  if (data) console.log(data);
 
   const depart = convertCityCodeToName(data, "depart");
   const arrive = convertCityCodeToName(data, "arrive");
