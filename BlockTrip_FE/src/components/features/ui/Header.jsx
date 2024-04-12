@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import logo from "/logo-green.png";
 
-const Header = () => {
+export const Header = () => {
   const navigate = useNavigate();
 
   return (
@@ -13,5 +13,3 @@ const Header = () => {
     />
   );
 };
-
-export default Header;

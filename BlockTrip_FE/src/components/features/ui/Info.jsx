@@ -1,4 +1,4 @@
-const Info = ({ label, children }) => {
+export const Info = ({ label, children }) => {
   return (
     <div className="flex text-xl">
       <span className="font-extralight mr-10">{label}</span>
@@ -6,5 +6,3 @@ const Info = ({ label, children }) => {
     </div>
   );
 };
-
-export default Info;

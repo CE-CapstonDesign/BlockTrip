@@ -1,9 +1,10 @@
-const SelectInput = ({
+export const SelectInput = ({
   name,
   id,
   selected,
   list,
   register,
+  onChange,
   setDefault = false,
 }) => {
   return (
@@ -12,6 +13,7 @@ const SelectInput = ({
       id={id}
       required
       defaultValue={selected}
+      onChange={onChange}
       {...register}
       className="border-b-2 border-gray w-[15rem] text-lg"
     >
@@ -24,5 +26,3 @@ const SelectInput = ({
     </select>
   );
 };
-
-export default SelectInput;

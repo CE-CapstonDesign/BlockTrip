@@ -1,4 +1,4 @@
-const Input = ({ className, register, ...inputProps }) => {
+export const Input = ({ className, register, ...inputProps }) => {
   return (
     <input
       autoFocus
@@ -8,5 +8,3 @@ const Input = ({ className, register, ...inputProps }) => {
     />
   );
 };
-
-export default Input;

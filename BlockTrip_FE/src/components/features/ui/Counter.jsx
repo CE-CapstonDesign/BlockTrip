@@ -1,4 +1,4 @@
-const Counter = ({
+export const Counter = ({
   section,
   description,
   name,
@@ -42,5 +42,3 @@ const Counter = ({
     </div>
   );
 };
-
-export default Counter;
