@@ -1,13 +1,11 @@
-import Button from "@/components/features/ui/Button";
 import interest from "/interest.png";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import Label from "@/components/features/ui/Label";
-import Title from "@/components/features/ui/Title";
 import { INTEREST, STYLE } from "@/constants/taste";
+import { Button, Label, Title } from "@/components/features/ui";
 
 const TasteInfo = () => {
-  const { register, setValue } = useFormContext();
+  const { setValue } = useFormContext();
 
   const [interests, setInterests] = useState([]);
   const [style, setStyle] = useState([]);
@@ -36,17 +34,14 @@ const TasteInfo = () => {
     }
   };
 
-  useEffect(() => {
-    register("interests");
-    register("travelStyle");
-  }, [register]);
-
   return (
     <div>
-      <Title src={interest}>여행 스타일</Title>
+      <Title src={interest} alt="interest icon">
+        여행 스타일
+      </Title>
       <section className="flex items-center [&_article]:mr-20">
         <article>
-          <Label htmlFor="departures">여행 스타일</Label>
+          <Label>여행 스타일</Label>
           <div className="w-[26rem]">
             {STYLE.map((el, idx) => (
               <Button
@@ -61,7 +56,7 @@ const TasteInfo = () => {
         </article>
 
         <article>
-          <Label htmlFor="departures">관심있는</Label>
+          <Label>관심있는</Label>
           <div className="w-[26rem]">
             {INTEREST.map((el, idx) => (
               <Button
