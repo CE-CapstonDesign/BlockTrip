@@ -234,35 +234,45 @@ public class SearchService {
 
         ChromeDriver driver = new ChromeDriver(options);
 
-        // Google Maps에서 공항 약자를 가지고 옵니다.
-        String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s",depart,dest);
-
-        driver.get(googleMaps);
-        WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
-        WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
-        String flightInfoText = spanElement.getText();
-
-        // 항공편 정보 출력
-        System.out.println("공항 약자 정보: " + flightInfoText);
-        // 정규표현식 패턴 설정
-        Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
-
-        // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
-        Matcher matcher = pattern.matcher(flightInfoText);
-
         // A공항과 B공항을 저장할 변수 초기화
         String departure = null;
         String destination = null;
+        String regex = "[a-z]{3}";
+        boolean isTrue = true;
 
-        // 매칭된 부분을 반복하여 추출
-        int i = 0;
-        while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
-            if (i == 0) {
-                departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
-            } else {
-                destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
+        if(Pattern.matches(regex, depart) && Pattern.matches(regex,dest)){
+            departure = depart;
+            destination = dest;
+        } else {
+
+
+            Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
+
+            // Google Maps에서 공항 약자를 가지고 옵니다.
+            String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s", depart, dest);
+
+            driver.get(googleMaps);
+            WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
+            WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
+            String flightInfoText = spanElement.getText();
+
+            // 항공편 정보 출력
+            System.out.println("공항 약자 정보: " + flightInfoText);
+            // 정규표현식 패턴 설정
+
+            // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
+            Matcher matcher = pattern.matcher(flightInfoText);
+
+            // 매칭된 부분을 반복하여 추출
+            int i = 0;
+            while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
+                if (i == 0) {
+                    departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
+                } else {
+                    destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
+                }
+                i++;
             }
-            i++;
         }
 
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
@@ -319,7 +329,6 @@ public class SearchService {
         travelResponseDTO.getFlightList().get(idx).setRegion(depart);
 
     }
-
     // GPT로부터 추천 받은 요소들을 최단 거리로 변환
     public TravelResponseDTO shortestPath(TravelRequest travelRequestDTO, TravelResponse travelPlan){
         TravelResponseDTO travelResponseDTO = new TravelResponseDTO();
