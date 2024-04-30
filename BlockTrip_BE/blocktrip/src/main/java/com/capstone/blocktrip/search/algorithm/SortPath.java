@@ -110,23 +110,21 @@ public class SortPath {
         for (int i=0; i<realRestaurant.size(); i++){
             System.out.println( i + " 디버깅용 realRestaurant: " + realRestaurant.get(i).getName());
         }
-
         travelResponseDTO.getPlaceList().add(placeList);
-
     }
     public static void lastDaySort(int departHour, TravelResponseDTO travelResponseDTO,Coordinate hotelCoordinate , List<Coordinate> realRestaurant, List<Coordinate> realPlace){
         // departHour까지 비행기 탑승하면 된다.
         List<TravelResponseDTO.Place> placeList = new ArrayList<>();
         TravelResponseDTO.Place place = new TravelResponseDTO.Place();
         Coordinate lastVisitedCoordinate = new Coordinate();
-            // 호텔 좌표에서 가장 가까운 곳
-            int idx = ShortestPath.shortestRestaurant(hotelCoordinate,realRestaurant);
-            place.setName(realRestaurant.get((int)idx).getName());
-            place.setLatitude(String.valueOf(realRestaurant.get((int)idx).getLatitude()));
-            place.setLongitude(String.valueOf(realRestaurant.get((int)idx).getLongitude()));
+        // 호텔 좌표에서 가장 가까운 곳
+        int idx = ShortestPath.shortestRestaurant(hotelCoordinate,realRestaurant);
+        place.setName(realRestaurant.get((int)idx).getName());
+        place.setLatitude(String.valueOf(realRestaurant.get((int)idx).getLatitude()));
+        place.setLongitude(String.valueOf(realRestaurant.get((int)idx).getLongitude()));
         place.setTime(String.valueOf(8));
         placeList.add(place);
-            realRestaurant.remove(idx);
+        realRestaurant.remove(idx);
         for(int i=9; i<=departHour; ){
             // 아침 / 점심 / 저녁 식사 시간
             if(i==12 || i==19){
