@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,12 +41,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.google.maps.GeocodingApi.reverseGeocode;
 
 @Component
 @EnableConfigurationProperties
@@ -85,6 +85,22 @@ public class SearchService {
         return myCoordinate;
     }
 
+    private static LatLng getCoordinates(GeoApiContext context, String location) {
+        try {
+            GeocodingResult[] results = GeocodingApi.geocode(context, location).await();
+            if (results.length == 0) {
+                System.out.println("No coordinates found for location: " + location);
+                return null;
+            }
+            return results[0].geometry.location;
+        } catch (Exception e) {
+            System.out.println("Error obtaining coordinates for location: " + location);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     @Transactional
     public boolean mapSearchValid(String myLocation, String mySearch) {
         String keyword = mySearch;
@@ -114,19 +130,6 @@ public class SearchService {
 
     }
 
-    private static LatLng getCoordinates(GeoApiContext context, String location) {
-        try {
-            GeocodingResult[] results = GeocodingApi.geocode(context, location).await();
-            if(results.length == 0){
-                return null;
-            }
-            return results[0].geometry.location;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     private static PlacesSearchResponse searchNearbyPlaces(GeoApiContext context, LatLng location, String keyword) {
         try {
             PlacesSearchResponse response = PlacesApi.nearbySearchQuery(context, location)
@@ -153,6 +156,49 @@ public class SearchService {
             System.out.println("해당 위치에 존재하지 않는 가게입니다.");
             return false;
         }
+    }
+    public String findHotelNearMidpoint(Coordinate start, Coordinate end, String checkIn, String checkOut) throws Exception {
+        Coordinate midpoint = calculateMidpoint(start.getLatitude(), start.getLongitude(), end.getLatitude(), end.getLongitude());
+        String address = reverseGeocode(midpoint);
+        return searchForHotelNearLocation(address, checkIn, checkOut);
+    }
+    private Coordinate calculateMidpoint(double lat1, double lon1, double lat2, double lon2) {
+        double midLat = (lat1 + lat2) / 2;
+        double midLon = (lon1 + lon2) / 2;
+        return new Coordinate("Midpoint", midLat, midLon);
+    }
+    private String reverseGeocode(Coordinate coordinate) throws Exception {
+        GeoApiContext context = new GeoApiContext.Builder().apiKey(apiKey).build();
+        LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
+        GeocodingResult[] results = GeocodingApi.reverseGeocode(context, latLng).await();
+        return results.length > 0 ? results[0].formattedAddress : "No address found";
+    }
+    private String searchForHotelNearLocation(String location, String checkIn, String checkOut) {
+        WebDriver driver = setupWebDriver();
+        try {
+            String searchUrl = "https://www.booking.com";
+            driver.get(searchUrl);
+            driver.findElement(By.id("ss")).sendKeys(location);
+            driver.findElement(By.cssSelector("button.sb-searchbox__button")).click();
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement hotelName = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h3.sr-hotel__title")));
+            return hotelName.getText();
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
+        }
+    }
+
+    private WebDriver setupWebDriver() {
+        String WEB_DRIVER_ID = "webdriver.chrome.driver";
+        String WEB_DRIVER_PATH = "chromedriver.exe";
+        System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--start-maximized", "disable-popup-blocking", "disable-default-apps");
+        return new ChromeDriver(options);
     }
 
     public void crawlingHotel(String dest, String checkin, String checkout, String option, String adult, String room, String child ,TravelResponseDTO travelResponseDTO){
@@ -193,29 +239,28 @@ public class SearchService {
 
             // WebDriver로 URL 열기
             driver.get(url);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".sr_property_block")));
 
-            // 페이지 소스 가져오기
-            String pageSource = driver.getPageSource();
+            List<WebElement> hotels = driver.findElements(By.cssSelector(".sr_property_block"));
+            for (WebElement hotelElement : hotels) {
+                String name = hotelElement.findElement(By.cssSelector(".sr-hotel__name")).getText().trim();
+                String price = hotelElement.findElement(By.cssSelector(".bui-price-display__value")).getText().trim();
 
-            // Jsoup을 사용하여 페이지 소스 파싱
-            Document document = Jsoup.parse(pageSource);
-            System.out.println("====== 사용자 선호도를 고려한 호텔 검색 =====");
-            // 호텔 정보가 있는 요소를 선택
-            Elements hotelElements = document.select("div[data-testid=title]");
-            Elements hotelPriceElements = document.select("span[data-testid=price-and-discounted-price]");
-            if(hotelElements.size()!=0) {
-                System.out.println("호텔 이름: " + hotelElements.get(0).text());
-                System.out.println("호텔 가격: " + hotelPriceElements.get(0).text());
-                travelResponseDTO.getHotel().setName(hotelElements.get(0).text());
-                travelResponseDTO.getHotel().setPrice(hotelPriceElements.get(0).text());
-            } else {
-                System.out.println("해당 지역의 호텔을 찾지 못했습니다.");
+                TravelResponseDTO.Hotel hotel = new TravelResponseDTO.Hotel();
+                hotel.setName(name);
+                hotel.setPrice(price);
+
+                travelResponseDTO.getHotels().add(hotel);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
         }
-        System.out.println("검색 완료!");
-
+        System.out.println("호텔 검색 완료.");
     }
 
     @Transactional
@@ -234,45 +279,35 @@ public class SearchService {
 
         ChromeDriver driver = new ChromeDriver(options);
 
+        // Google Maps에서 공항 약자를 가지고 옵니다.
+        String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s",depart,dest);
+
+        driver.get(googleMaps);
+        WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
+        WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
+        String flightInfoText = spanElement.getText();
+
+        // 항공편 정보 출력
+        System.out.println("공항 약자 정보: " + flightInfoText);
+        // 정규표현식 패턴 설정
+        Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
+
+        // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
+        Matcher matcher = pattern.matcher(flightInfoText);
+
         // A공항과 B공항을 저장할 변수 초기화
         String departure = null;
         String destination = null;
-        String regex = "[a-z]{3}";
-        boolean isTrue = true;
 
-        if(Pattern.matches(regex, depart) && Pattern.matches(regex,dest)){
-            departure = depart;
-            destination = dest;
-        } else {
-
-
-            Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
-
-            // Google Maps에서 공항 약자를 가지고 옵니다.
-            String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s", depart, dest);
-
-            driver.get(googleMaps);
-            WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
-            WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
-            String flightInfoText = spanElement.getText();
-
-            // 항공편 정보 출력
-            System.out.println("공항 약자 정보: " + flightInfoText);
-            // 정규표현식 패턴 설정
-
-            // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
-            Matcher matcher = pattern.matcher(flightInfoText);
-
-            // 매칭된 부분을 반복하여 추출
-            int i = 0;
-            while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
-                if (i == 0) {
-                    departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
-                } else {
-                    destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
-                }
-                i++;
+        // 매칭된 부분을 반복하여 추출
+        int i = 0;
+        while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
+            if (i == 0) {
+                departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
+            } else {
+                destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
             }
+            i++;
         }
 
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
@@ -329,6 +364,7 @@ public class SearchService {
         travelResponseDTO.getFlightList().get(idx).setRegion(depart);
 
     }
+
     // GPT로부터 추천 받은 요소들을 최단 거리로 변환
     public TravelResponseDTO shortestPath(TravelRequest travelRequestDTO, TravelResponse travelPlan){
         TravelResponseDTO travelResponseDTO = new TravelResponseDTO();
@@ -383,8 +419,8 @@ public class SearchService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // String -> Data 형으로 변환
-        LocalDate departDateFormat = LocalDate.parse(departDate, formatter);
-        LocalDate arrivalDateFormat = LocalDate.parse(arrivalDate, formatter);
+        LocalDate departDateFormat = LocalDate.parse(departDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate arrivalDateFormat = LocalDate.parse(arrivalDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         // 두 날짜 간의 일수 계산
         long daysBetween = ChronoUnit.DAYS.between(departDateFormat, arrivalDateFormat);
@@ -406,9 +442,14 @@ public class SearchService {
         travelResponseDTO.getFlightList().get(1).setLongitude(String.valueOf(airportCoordinate.getLongitude()));
         travelResponseDTO.getFlightList().get(1).setLatitude(String.valueOf(airportCoordinate.getLatitude()));
 
-        Coordinate hotelCoordinate = getCoordinate(destinationLocation,travelResponseDTO.getHotel().getName());
-        travelResponseDTO.getHotel().setLatitude(String.valueOf(hotelCoordinate.getLatitude()));
-        travelResponseDTO.getHotel().setLongitude(String.valueOf(hotelCoordinate.getLongitude()));
+
+        List<Coordinate> hotelCoordinateList = new ArrayList<>();
+        for (TravelResponseDTO.Hotel hotel : travelResponseDTO.getHotels()) {
+            Coordinate hotelCoordinate = getCoordinate(destinationLocation, hotel.getName());
+            hotel.setLatitude(String.valueOf(hotelCoordinate.getLatitude()));
+            hotel.setLongitude(String.valueOf(hotelCoordinate.getLongitude()));
+            hotelCoordinateList.add(hotelCoordinate);
+        }
 
         List<Coordinate> realRestaurant = new ArrayList<>();
         List<Coordinate> realPlace = new ArrayList<>();
@@ -445,15 +486,16 @@ public class SearchService {
         int departHour = Integer.parseInt(arriveTime.split(":")[0]);
         try {
             for (long i = 0; i <= daysBetween; i++) {
-                if (i == 0) { // 첫 날
+                if (i == 0) { // 첫째 날
                     SortPath.firstDaySort(arriveHour, travelResponseDTO, airportCoordinate, realRestaurant, realPlace);
                 } else if (i == daysBetween) { // 마지막 날
-                    SortPath.lastDaySort(departHour, travelResponseDTO, hotelCoordinate, realRestaurant, realPlace);
+                    SortPath.lastDaySort(departHour, travelResponseDTO, hotelCoordinateList.get((int)i-1), realRestaurant, realPlace);
                 } else { // 나머지 날
-                    SortPath.restDaySort(travelResponseDTO, hotelCoordinate, realRestaurant, realPlace);
+                    SortPath.restDaySort(travelResponseDTO, hotelCoordinateList.get((int)i-1), realRestaurant, realPlace);
                 }
             }
         }
+        //hotelCoordinate를 매번 갱신 및 restdaysort
         catch (Exception e){
             System.out.println("에러 원인: " + e.getMessage());
             throw new Exception500("서버에서 처리 과정 중 오류가 발생하였습니다.");

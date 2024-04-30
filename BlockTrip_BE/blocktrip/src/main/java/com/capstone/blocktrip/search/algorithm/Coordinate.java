@@ -12,4 +12,13 @@ public class Coordinate {
     private double latitude;
     // 경도
     private double longitude;
+
+    public Coordinate() {
+    }
+
+    public Coordinate(String name, double latitude, double longitude) {
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }

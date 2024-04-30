@@ -12,7 +12,7 @@ public class TravelResponseDTO {
     public TravelResponseDTO() {
         this.flightList = new ArrayList<>(); // flightList 초기화
         this.placeList = new ArrayList<>();
-        this.hotel = new Hotel();
+        this.hotels = new ArrayList<>();
     }
 
     @Data
@@ -45,7 +45,7 @@ public class TravelResponseDTO {
     }
 
     private List<Flight> flightList;
-    private Hotel hotel;
+    private List<Hotel> hotels;
     private List<List<Place>> placeList;
 
 }
