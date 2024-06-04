@@ -28,12 +28,12 @@ public class ChatGPTService {
     }
 
     public CompletableFuture<String> callGPT3Async(String prompt) {
-        logger.info("Asynchronous GPT-3 call with prompt: {}", prompt);
+        logger.info("Asynchronous GPT call with prompt: {}", prompt);
         return callGPT3Internal(prompt, true).toFuture();
     }
 
     public String callGPT3(String prompt) {
-        logger.info("Synchronous GPT-3 call with prompt: {}", prompt);
+        logger.info("Synchronous GPT call with prompt: {}", prompt);
         return callGPT3Internal(prompt, false).block();
     }
 
@@ -42,12 +42,12 @@ public class ChatGPTService {
                 .uri("/v1/chat/completions")
                 .headers(headers -> headers.setBearerAuth(apiKey))
                 .bodyValue(Map.of(
-                        "model", "gpt-3.5-turbo",
+                        "model", "gpt-4o",
                         "messages", List.of(Map.of("role", "user", "content", prompt))
                 ))
                 .retrieve()
                 .bodyToMono(String.class)
                 .doOnNext(response -> logger.info("Received response: {}", response))
-                .doOnError(error -> logger.error("Error during GPT-3 call", error));
+                .doOnError(error -> logger.error("Error during GPT call", error));
     }
 }
