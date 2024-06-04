@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,6 +26,7 @@ public class TravelService {
     public TravelResponse generatePlan(TravelRequest request) {
         String restaurantPrompt = createRestaurantPrompt(request);
         String placePrompt = createPlacePrompt(request);
+        int numberOfItems = calculateNumberOfItems(request);
 
         CompletableFuture<String> restaurantFuture = chatGPTService.callGPT3Async(restaurantPrompt);
         CompletableFuture<String> placeFuture = chatGPTService.callGPT3Async(placePrompt);
@@ -39,11 +39,12 @@ public class TravelService {
         return combineResponses(restaurantResponse, placeResponse);
     }
 
-    private long calculateDaysBetween(String startDate, String endDate) {
+    private int calculateNumberOfItems(TravelRequest request) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse(startDate, formatter);
-        LocalDate end = LocalDate.parse(endDate, formatter);
-        return ChronoUnit.DAYS.between(start, end);
+        LocalDate start = LocalDate.parse(request.getCommon().getDepartureDate(), formatter);
+        LocalDate end = LocalDate.parse(request.getCommon().getArrivalDate(), formatter);
+        long days = ChronoUnit.DAYS.between(start, end);
+        return (int) (20 * days);
     }
 
     private String createRestaurantPrompt(TravelRequest request) {
@@ -51,21 +52,14 @@ public class TravelService {
         TravelRequest.RestaurantRequest restaurant = request.getRestaurant();
         String foodTypes = String.join(", ", restaurant.getFoodType());
         String restaurantTypes = String.join(", ", restaurant.getRestaurantType());
-
-        long days = calculateDaysBetween(common.getDepartureDate(), common.getArrivalDate());
-        int numberOfPlaces = (int) (20 * days);
+        int numberOfItems = calculateNumberOfItems(request);
 
         return String.format(
-                "destination: %s, depart Date: %s, arrive date: %s\n" +
-                        "region: %s food type %s please recommend restaurant topic %s .\n" +
-                        "Please present up to %s actual restaurants in english in a list format. Please provide only the name of each restaurant, please never never use newlines or dot, and list them separated by only commas (, ) as shown in the example. (Examples: Gwangju Prison History Museum, Asia Culture Center, Chonnam National University, Gwangju Red Clay Road)",
-                common.getDestinationLocation(),
-                common.getDepartureDate(),
-                common.getArrivalDate(),
+                "List %s restaurant names in the %s corresponding to %s, and %s. The response must be exactly 50 restaurant names, separated by commas, and should not include any other details like numbering.",
+                numberOfItems,
                 common.getDestinationLocation(),
                 foodTypes,
-                restaurantTypes,
-                numberOfPlaces
+                restaurantTypes
         );
     }
 
@@ -74,21 +68,14 @@ public class TravelService {
         TravelRequest.PlaceRequest place = request.getPlace();
         String interests = String.join(", ", place.getInterests());
         String travelStyles = String.join(", ", place.getTravelStyle());
-
-        long days = calculateDaysBetween(common.getDepartureDate(), common.getArrivalDate());
-        int numberOfPlaces = (int) (20 * days);
+        int numberOfItems = calculateNumberOfItems(request);
 
         return String.format(
-                "destination: %s, depart Date: %s, arrive date: %s\n" +
-                        "region: %s my style: %s style. my interest: %s  please recommend attractions.\n" +
-                        "Please present up to %s tourist attractions in english in a list format. Please provide only the name of each tourist attraction, please never never use newlines or dot, and list them separated only by commas (, ) as shown in the example. (Ex: sushi, udon, yakitori, hambuger)",
+                "List exactly %s tourist attraction names in %s that match the interests of %s and the travel styles of %s. The response must be exactly 50 names, separated only by commas, and should not include any other details.",
+                numberOfItems,
                 common.getDestinationLocation(),
-                common.getDepartureDate(),
-                common.getArrivalDate(),
-                common.getDestinationLocation(),
-                travelStyles,
                 interests,
-                numberOfPlaces
+                travelStyles
         );
     }
 
@@ -106,14 +93,11 @@ public class TravelService {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             JsonNode rootNode = objectMapper.readTree(response);
-            JsonNode choices = rootNode.path("choices");
-            if (!choices.isMissingNode() && choices.isArray()) {
-                for (JsonNode choice : choices) {
-                    JsonNode messageNode = choice.path("message");
-                    if (!messageNode.isMissingNode()) {
-                        String content = messageNode.path("content").asText();
-                        content = content.replaceAll("\n", ",");
-                        content = content.replaceAll("\\d+\\.\\s*", "");
+            JsonNode choicesNode = rootNode.path("choices");
+            if (!choicesNode.isMissingNode() && choicesNode.isArray()) {
+                for (JsonNode choiceNode : choicesNode) {
+                    String content = choiceNode.path("message").path("content").asText();
+                    if (!content.isEmpty()) {
                         String[] items = content.split(",");
                         for (String item : items) {
                             results.add(item.trim());
@@ -126,6 +110,4 @@ public class TravelService {
         }
         return results;
     }
-
-
 }
