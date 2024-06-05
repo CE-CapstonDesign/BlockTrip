@@ -69,7 +69,7 @@ export const Home = () => {
         arrive: data.destinationLocation,
         departDate: data.departureDate,
         arriveDate: data.arrivalDate,
-        flighttype: flight || "ow",
+        flighttype: flight || "rt",
         class: SEAT[data.class],
         quantity: data.adult || 1,
         childqty: data.child || 0,
