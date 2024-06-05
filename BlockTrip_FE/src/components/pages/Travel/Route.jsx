@@ -1,12 +1,11 @@
 import { Wrapper } from "@googlemaps/react-wrapper";
 import { useState } from "react";
 import { Button } from "@/components/features/ui";
-import { setKey, setLanguage, setRegion } from "react-geocode";
+import { setKey, setLanguage } from "react-geocode";
 import { TRANSPORTATION_TYPE } from "@/constants/location";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
-setLanguage("en");
-setRegion("es");
+setLanguage("ko");
 
 const Route = ({ data }) => {
   const basicTransportation = Object.keys(TRANSPORTATION_TYPE)[0];
@@ -45,9 +44,9 @@ const Route = ({ data }) => {
       ))}
       <div className="flex mt-10">
         <div className="leading-10 text-lg">
-          {data[filter]?.map((el) => {
+          {data[filter]?.map((el, idx) => {
             return (
-              <div key={el.id}>
+              <div key={`${idx}-${el.latitude}`}>
                 <span className="mr-6 text-gray w-10 inline-block">
                   {el.time}시
                 </span>
@@ -59,8 +58,8 @@ const Route = ({ data }) => {
         <Wrapper>
           <iframe
             className="ml-48"
-            width="550px"
-            height="500px"
+            width="670px"
+            height="670px"
             src={`https://www.google.com/maps/embed/v1/directions?key=${
               import.meta.env.VITE_GOOGLE_KEY
             }&origin=${data[filter][0].latitude},${
