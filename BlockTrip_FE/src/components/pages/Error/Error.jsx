@@ -11,7 +11,11 @@ export const Error = ({ error }) => {
         </p>
         <p className="text-lg">
           에러내용: {error.message}
-          <br /> {error.response.data.error.message}
+          <br />
+          <details>
+            <summary>자세한 에러 내용</summary>
+            {error.response.data.error.message}
+          </details>
         </p>
         <p
           className="text-green text-xl cursor-pointer mt-10"
