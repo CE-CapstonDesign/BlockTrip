@@ -3,7 +3,7 @@ import "./Loader.css";
 export const Loader = () => {
   return (
     <div className="flex flex-col justify-center items-center h-[100vh]">
-      <p className="mt-[15rem] text-xl">최적의 여행 경로를 찾고 있습니다.</p>
+      <p className="mt-[15rem] text-2xl">최적의 여행 경로를 찾고 있습니다.</p>
 
       <div className="content">
         <svg
