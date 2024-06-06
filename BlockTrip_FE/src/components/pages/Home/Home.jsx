@@ -62,7 +62,7 @@ export const Home = () => {
       },
       flight: {
         depart: data.depart,
-        arrive: data.destinationLocation,
+        arrive: data.airportDestination || data.destinationLocation,
         departDate: data.departureDate,
         arriveDate: data.arrivalDate,
         flighttype: flight || "rt",
