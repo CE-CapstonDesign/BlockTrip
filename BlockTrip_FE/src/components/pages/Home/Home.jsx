@@ -15,7 +15,6 @@ import routes from "@/routes";
 import { HOTEL } from "@/constants/hotel";
 import { SEAT } from "@/constants/flight";
 import { travelPlan } from "@/services/travel";
-import { Error } from "../Error";
 
 export const Home = () => {
   const navigate = useNavigate();
@@ -32,9 +31,6 @@ export const Home = () => {
     mutation.mutate(request, {
       onSuccess: () => {
         navigate(routes.result);
-      },
-      onError: (error) => {
-        return <Error error={error} />;
       },
     });
   };
@@ -76,7 +72,6 @@ export const Home = () => {
         babyqty: data.babyqty || 0,
       },
     };
-
     setRequest(request);
   };
 
