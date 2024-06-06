@@ -18,16 +18,17 @@ const TravelInfo = () => {
   const [destination, setDestination] = useState("");
 
   useEffect(() => {
-    if (Object.keys(LOCATION).includes(depart)) {
-      setDepart(LOCATION[depart]);
-    }
+    setValue("destinationLocation", destination);
     if (Object.keys(LOCATION).includes(destination)) {
-      setDestination(LOCATION[destination]);
+      setValue("airportDestination", LOCATION[destination]);
     }
 
-    setValue("depart", depart);
-    setValue("destinationLocation", destination);
-  }, [depart, destination, setValue, setDepart, setDestination]);
+    if (Object.keys(LOCATION).includes(depart)) {
+      setValue("depart", LOCATION[depart]);
+    } else {
+      setValue("depart", depart);
+    }
+  }, [depart, destination, setValue]);
 
   return (
     <div>
