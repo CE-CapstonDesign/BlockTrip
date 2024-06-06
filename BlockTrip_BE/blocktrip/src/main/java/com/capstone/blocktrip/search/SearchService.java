@@ -172,7 +172,7 @@ public class SearchService {
 
     private WebDriver setupWebDriver() {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
-        String WEB_DRIVER_PATH = "chromedriver";
+        String WEB_DRIVER_PATH = "chromedriver.exe";
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
         ChromeOptions options = new ChromeOptions();
@@ -182,7 +182,7 @@ public class SearchService {
 
     private void crawlingHotel(String dest, String checkin, String checkout, String option, String adult, String room, String child, TravelResponseDTO travelResponseDTO, int dayIndex) {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
-        String WEB_DRIVER_PATH = "chromedriver";
+        String WEB_DRIVER_PATH = "chromedriver.exe";
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
         ChromeOptions options = new ChromeOptions();
@@ -275,7 +275,7 @@ public class SearchService {
     @Transactional
     public void crawlingFlight(String depart, String dest, String departDate, String destDate, String flightType, String seatClass, String quantity, String childqty, String babyqty, TravelResponseDTO travelResponseDTO, int idx) throws InterruptedException {
         String WEB_DRIVER_ID = "webdriver.chrome.driver";
-        String WEB_DRIVER_PATH = "chromedriver";
+        String WEB_DRIVER_PATH = "chromedriver.exe";
 
         System.setProperty(WEB_DRIVER_ID, WEB_DRIVER_PATH);
 
@@ -287,39 +287,41 @@ public class SearchService {
 
         ChromeDriver driver = new ChromeDriver(options);
 
-        // Google Maps에서 공항 약자를 가지고 옵니다.
-        String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s", depart, dest);
-
-        driver.get(googleMaps);
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // 명시적 대기 추가
-        WebElement flightInfoElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("LE0rHc")));
-        WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
-        String flightInfoText = spanElement.getText();
-
-        // 항공편 정보 출력
-        System.out.println("공항 약자 정보: " + flightInfoText);
-        // 정규표현식 패턴 설정
-        Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
-
-        // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
-        Matcher matcher = pattern.matcher(flightInfoText);
-
         // A공항과 B공항을 저장할 변수 초기화
         String departure = null;
         String destination = null;
+        String regex = "[a-z]{3}";
+        boolean isTrue = true;
+        if(Pattern.matches(regex, depart) && Pattern.matches(regex,dest)){
+            departure = depart;
+            destination = dest;
+        } else {
+            Pattern pattern = Pattern.compile("[A-Z]{3}"); // 세 글자의 대문자 알파벳만 매칭하는 패턴
+            // Google Maps에서 공항 약자를 가지고 옵니다.
+            String googleMaps = String.format("https://www.google.co.kr/maps/dir/%s/%s", depart, dest);
+            driver.get(googleMaps);
+            WebElement flightInfoElement = driver.findElement(By.className("LE0rHc"));
+            WebElement spanElement = flightInfoElement.findElement(By.tagName("i"));
+            String flightInfoText = spanElement.getText();
 
-        // 매칭된 부분을 반복하여 추출
-        int i = 0;
-        while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
-            if (i == 0) {
-                departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
-            } else {
-                destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
+            // 항공편 정보 출력
+            System.out.println("공항 약자 정보: " + flightInfoText);
+            // 정규표현식 패턴 설정
+
+            // 패턴을 이용하여 문자열에서 매칭되는 부분을 찾음
+            Matcher matcher = pattern.matcher(flightInfoText);
+
+            // 매칭된 부분을 반복하여 추출
+            int i = 0;
+            while (matcher.find() && i < 2) { // 처음 두 개의 매칭 부분을 찾음
+                if (i == 0) {
+                    departure = matcher.group(); // 첫 번째 매칭된 부분을 출발지로 저장
+                } else {
+                    destination = matcher.group(); // 두 번째 매칭된 부분을 도착지로 저장
+                }
+                i++;
             }
-            i++;
         }
-
         // 쿼리스트링에 임의의 값을 넣어주었습니다. ( 서울 -> 오사카 )
         String url = String.format("https://kr.trip.com/flights/%s-to-%s/tickets-sel-dad?dcity=%s&acity=%s&ddate=%s&rdate=%s&flighttype=%s&class=%s&lowpricesource=searchform&quantity=%s&childqty=%s&babyqty=%s&searchboxarg=t",
                 departure, destination, departure, destination, departDate, destDate, flightType, seatClass, quantity, childqty, babyqty);
@@ -328,6 +330,9 @@ public class SearchService {
 
         // 트립닷컴의 항공권 최저가 검색이 완료된 후 크롤링을 진행하기 위해서 10초동안 쉬고 크롤링을 진행합니다.
         Thread.sleep(8000);
+
+        // [class="item-con-price"] span 의 CSS 선택자 요소가 나타날 때까지 대기합니다. (최대 10초)
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(8));
 
         // [class="item-con-price"] span 의 CSS 선택자 요소가 나타날 때까지 대기합니다. (최대 10초)
         wait = new WebDriverWait(driver, Duration.ofSeconds(8));
