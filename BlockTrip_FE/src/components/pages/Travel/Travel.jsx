@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { travel } from "@/services/travel";
 import { Header } from "@/components/features/ui";
 import { convertCityCodeToName } from "@/utils/convertCityCodeToName";
+import Detail from "./Detail";
 
 export const Travel = () => {
   const { data } = useQuery({
@@ -27,6 +28,7 @@ export const Travel = () => {
           <Hotel data={data.hotels} />
           <Flight data={data.flightList} />
           <Route data={data.placeList} />
+          <Detail data={data.placeList} />
         </section>
       </section>
     </>
