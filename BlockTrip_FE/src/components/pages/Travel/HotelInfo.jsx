@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getAddressFromLatLng } from "@/utils/getAddressFromLatLng";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
-setLanguage("ko");
+setLanguage("en");
 
 const HotelInfo = ({ location, data, hotelIndex }) => {
   const [hotelAddress, setHotelAddress] = useState("");
