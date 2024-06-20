@@ -36,7 +36,6 @@ export const Home = () => {
   };
 
   const onSubmit = (data) => {
-    const flight = data.flighttype === "왕복" ? "ow" : "rt";
     const request = {
       common: {
         destinationLocation: data.destinationLocation,
@@ -65,7 +64,7 @@ export const Home = () => {
         arrive: data.airportDestination || data.destinationLocation,
         departDate: data.departureDate,
         arriveDate: data.arrivalDate,
-        flighttype: flight || "rt",
+        flighttype: "rt",
         class: SEAT[data.class],
         quantity: data.adult || 1,
         childqty: data.child || 0,
