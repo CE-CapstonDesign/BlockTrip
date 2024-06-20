@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/features/ui";
 import { setKey, setLanguage } from "react-geocode";
 import { TRANSPORTATION_TYPE } from "@/constants/location";
+import { Date } from "@/components/features/ui/Date";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
 setLanguage("ko");
@@ -25,12 +26,7 @@ const Route = ({ data }) => {
   return (
     <div>
       <p className="text-neutral-500 text-3xl mb-4">여행 계획 안내</p>
-      <p className="text-xl mt-8">여행일자</p>
-      {Array.from({ length: data.length }, (_, i) => (
-        <Button key={i} onClick={() => setFilter(i)} active={filter === i}>
-          {i + 1}일차
-        </Button>
-      ))}
+      <Date data={data} filter={filter} onClick={setFilter} />
       <br />
       <p className="text-xl mt-8">교통수단</p>
       {Object.keys(TRANSPORTATION_TYPE).map((x, index) => (
