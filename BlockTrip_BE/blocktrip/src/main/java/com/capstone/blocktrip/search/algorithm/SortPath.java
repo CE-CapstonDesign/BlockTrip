@@ -110,6 +110,9 @@ public class SortPath {
     }
 
     public static void lastDaySort(int departHour, TravelResponseDTO travelResponseDTO, Coordinate hotelCoordinate, List<Coordinate> realRestaurant, List<Coordinate> realPlace) {
+        if(departHour <= 8){
+            return;
+        }
         List<TravelResponseDTO.Place> placeList = new ArrayList<>();
         TravelResponseDTO.Place place = new TravelResponseDTO.Place();
         Coordinate lastVisitedCoordinate = new Coordinate();
