@@ -49,6 +49,8 @@ public class SearchService {
     @Value("${api.google.maps.key}")
     private String apiKey;
 
+    static String destLocation = null;
+
     public Coordinate getCoordinate(String myLocation, String mySearch) {
         Coordinate myCoordinate = new Coordinate();
         String keyword = mySearch;
@@ -214,7 +216,7 @@ public class SearchService {
                     String name = hotelElement.findElement(By.cssSelector("div[data-testid='title']")).getText().trim();
                     String price = hotelElement.findElement(By.cssSelector("span[data-testid='price-and-discounted-price']")).getText().trim();
                     String hotelAddress = hotelElement.findElement(By.cssSelector("span[data-testid='address']")).getText().trim();
-                    Coordinate hotelCoordinate = getCoordinate(dest, hotelAddress);
+                    Coordinate hotelCoordinate = getCoordinate(destLocation, hotelAddress);
 
                     TravelResponseDTO.Hotel hotel = new TravelResponseDTO.Hotel();
                     hotel.setName(name);
@@ -392,6 +394,7 @@ public class SearchService {
         String departureLocation = travelRequestDTO.getCommon().getDepartureLocation();
         // 도착지
         String destinationLocation = travelRequestDTO.getCommon().getDestinationLocation();
+        destLocation = destinationLocation;
 
         // *** 항공권 옵션
         String flightSeatClass = null;
