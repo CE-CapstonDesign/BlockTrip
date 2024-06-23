@@ -10,7 +10,6 @@ public class ShortestPath {
         double currentLongitude = coordinate.getLatitude();
         double shortestDistance = 10000000;
         int shortestIdx = 0;
-        System.out.println("디버깅용 place size: " + place.size());
         for(int i=0; i<place.size(); i++){
             double distance = calculateDistance(currentLatitude, currentLongitude, place.get(i).getLatitude(), place.get(i).getLongitude());
             if(distance < shortestDistance){
@@ -26,13 +25,9 @@ public class ShortestPath {
         double currentLongitude = coordinate.getLatitude();
         double shortestDistance = 10000000;
         int shortestIdx = 0;
-        System.out.println("디버깅용 place size: " + restaurant.size());
         for(int i=0; i<restaurant.size(); i++){
             double distance = calculateDistance(currentLatitude, currentLongitude, restaurant.get(i).getLatitude(), restaurant.get(i).getLongitude());
-            System.out.println("현재 비교하는 distance: " + distance);
-            System.out.println("현재 shortestDistance: " + shortestDistance);
             if(distance < shortestDistance){
-                System.out.println("shortestDistance 업데이트: " + shortestDistance);
                 shortestDistance = distance;
                 shortestIdx = i;
             }

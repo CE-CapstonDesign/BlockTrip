@@ -15,12 +15,6 @@ public class SortPath {
         if (tempArriveHour < 8) {
             tempArriveHour = 8;
         }
-        for (int i = 0; i < realPlace.size(); i++) {
-            System.out.println(i + "번째 firstDaySort RealPlace: " + realPlace.get(i).getName());
-        }
-        for (int i = 0; i < realRestaurant.size(); i++) {
-            System.out.println(i + "번째 firstDaySort RealRestaurant: " + realRestaurant.get(i).getName());
-        }
         if ((arriveHour >= 8 && arriveHour < 9) || (arriveHour >= 12 && arriveHour < 13) || (arriveHour >= 19 && arriveHour < 20)) {
             idx = ShortestPath.shortestRestaurant(airportCoordinate, realRestaurant);
             place = new TravelResponseDTO.Place();
@@ -100,12 +94,6 @@ public class SortPath {
                 i = i + 2;
             }
         }
-        for (int i = 0; i < realPlace.size(); i++) {
-            System.out.println(i + " 디버깅용 realPlace: " + realPlace.get(i).getName());
-        }
-        for (int i = 0; i < realRestaurant.size(); i++) {
-            System.out.println(i + " 디버깅용 realRestaurant: " + realRestaurant.get(i).getName());
-        }
         travelResponseDTO.getPlaceList().add(placeList);
     }
 
@@ -155,7 +143,6 @@ public class SortPath {
             } else {
                 idx = ShortestPath.shortestRestaurant(lastVisitedCoordinate, realPlace);
                 place = new TravelResponseDTO.Place();
-                System.out.println("lastday idx: " + idx);
                 place.setName(realPlace.get(idx).getName());
                 place.setLatitude(String.valueOf(realPlace.get(idx).getLatitude()));
                 place.setLongitude(String.valueOf(realPlace.get(idx).getLongitude()));
@@ -166,12 +153,6 @@ public class SortPath {
                 realPlace.remove(idx);
                 i = i + 2;
             }
-        }
-        for (int i = 0; i < realPlace.size(); i++) {
-            System.out.println(i + " 디버깅용 realPlace: " + realPlace.get(i).getName());
-        }
-        for (int i = 0; i < realRestaurant.size(); i++) {
-            System.out.println(i + " 디버깅용 realRestaurant: " + realRestaurant.get(i).getName());
         }
         travelResponseDTO.getPlaceList().add(placeList);
     }
@@ -218,7 +199,7 @@ public class SortPath {
                 i = i + 1;
             } else {
                 idx = ShortestPath.shortestRestaurant(lastVisitedCoordinate, realPlace);
-                System.out.println("restday idx: " + idx);
+                // System.out.println("restday idx: " + idx);
                 place = new TravelResponseDTO.Place();
                 place.setName(realPlace.get(idx).getName());
                 place.setLatitude(String.valueOf(realPlace.get(idx).getLatitude()));
@@ -230,12 +211,6 @@ public class SortPath {
                 realPlace.remove(idx);
                 i = i + 2;
             }
-        }
-        for (int i = 0; i < realPlace.size(); i++) {
-            System.out.println(i + " 디버깅용 realPlace: " + realPlace.get(i).getName());
-        }
-        for (int i = 0; i < realRestaurant.size(); i++) {
-            System.out.println(i + " 디버깅용 realRestaurant: " + realRestaurant.get(i).getName());
         }
         travelResponseDTO.getPlaceList().add(placeList);
     }
