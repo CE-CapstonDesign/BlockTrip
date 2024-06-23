@@ -1,7 +1,18 @@
 const Flight = ({ data }) => {
   return (
     <div>
-      <p className="text-neutral-500 text-3xl mb-10">항공권 정보</p>
+      <article className="flex items-baseline">
+        <p className="text-neutral-500 text-3xl mb-10">항공권 정보</p>
+        <span className="text-xl ml-8 text-gray">
+          <a
+            href="https://kr.trip.com"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            -&gt; 예약하러 가기
+          </a>
+        </span>
+      </article>
       <div className="flex gap-32">
         {data.map((x, i) => (
           <div className="flex flex-col text-xl" key={i}>

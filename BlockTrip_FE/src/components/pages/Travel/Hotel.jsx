@@ -1,6 +1,7 @@
 import { useState } from "react";
 import HotelInfo from "./HotelInfo";
 import { Button } from "@/components/features/ui";
+import { selectedItem } from "@/style/selectedItem";
 
 const Hotel = ({ data }) => {
   const [hotelIndex, setHotelIndex] = useState(0);
@@ -35,18 +36,25 @@ const Hotel = ({ data }) => {
 
   return (
     <div>
-      <p className="text-neutral-500 text-3xl mb-8">숙박 정보</p>
+      <article className="flex items-baseline">
+        <p className="text-neutral-500 text-3xl mb-8">숙박 정보</p>
+        <span className="text-xl ml-8 text-gray">
+          <a
+            href="https://www.booking.com"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            -&gt; 예약하러 가기
+          </a>
+        </span>
+      </article>
       <div className="flex gap-24">
         <ul className="[&_li]:cursor-pointer">
           {data.map(
             (x, idx) =>
               selectedHotel[idx] && (
                 <li
-                  className={`truncate w-52 text-lg leading-10 hover:font-bold active:font-bold ${
-                    selectedIndex === idx
-                      ? "font-bold text-green"
-                      : "font-light"
-                  }`}
+                  className={selectedItem(selectedIndex, idx)}
                   key={`${idx}-${x.latitude}`}
                   onClick={() => handleItemClick(idx)}
                 >
@@ -58,7 +66,7 @@ const Hotel = ({ data }) => {
         {selectedHotel[hotelIndex] && (
           <div className="flex flex-col">
             <HotelInfo
-              location={data[hotelIndex].latitude}
+              location={data[hotelIndex]?.latitude}
               data={data}
               hotelIndex={hotelIndex}
             />

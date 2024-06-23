@@ -1,10 +1,11 @@
 import { setKey, setLanguage } from "react-geocode";
 import { Wrapper } from "@googlemaps/react-wrapper";
 import { useState, useEffect } from "react";
-import { getAddressFromLatLng } from "@/utils/getAddressFromLatLng";
+import { getAddressFromLatLng } from "@/utils/geocode";
+import { PlaceInfo } from "./PlaceInfo";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
-setLanguage("ko");
+setLanguage("en");
 
 const HotelInfo = ({ location, data, hotelIndex }) => {
   const [hotelAddress, setHotelAddress] = useState("");
@@ -25,17 +26,10 @@ const HotelInfo = ({ location, data, hotelIndex }) => {
   } else {
     return (
       <section>
-        <div className="flex text-lg [&_div]:leading-10">
-          <div className="text-neutral-500">
-            <p>숙소 이름</p>
-            <p>숙소 위치</p>
-            <p>가격</p>
-          </div>
-          <div className="ml-10">
-            <p>{data[hotelIndex].name}</p>
-            <p>{hotelAddress}</p>
-            <p>{data[hotelIndex].price}</p>
-          </div>
+        <div className="[&>*]:leading-10">
+          <PlaceInfo data={data[hotelIndex]?.name}>숙소 이름</PlaceInfo>
+          <PlaceInfo data={hotelAddress}>숙소 위치</PlaceInfo>
+          <PlaceInfo data={data[hotelIndex]?.price}>가격</PlaceInfo>
         </div>
         <Wrapper>
           <iframe
@@ -44,8 +38,8 @@ const HotelInfo = ({ location, data, hotelIndex }) => {
             height="400px"
             src={`https://www.google.com/maps/embed/v1/place?key=${
               import.meta.env.VITE_GOOGLE_KEY
-            }&q=${data[hotelIndex].latitude}, ${
-              data[hotelIndex].longitude
+            }&q=${data[hotelIndex]?.latitude}, ${
+              data[hotelIndex]?.longitude
             }&zoom=12`}
           />
         </Wrapper>

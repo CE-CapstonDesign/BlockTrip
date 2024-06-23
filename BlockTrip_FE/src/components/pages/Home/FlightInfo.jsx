@@ -1,14 +1,8 @@
 import { useState } from "react";
 import flight from "/flight.png";
 import { useFormContext, Controller } from "react-hook-form";
-import {
-  Counter,
-  Label,
-  SelectInput,
-  Title,
-  ToggleBtn,
-} from "@/components/features/ui";
-import { FLIGHT_METHOD, SEAT, PEOPLE_LIMIT } from "@/constants/flight";
+import { Counter, Label, SelectInput, Title } from "@/components/features/ui";
+import { SEAT, PEOPLE_LIMIT } from "@/constants/flight";
 
 const FlightInfo = () => {
   const { register, control } = useFormContext();
@@ -16,8 +10,6 @@ const FlightInfo = () => {
   const [adult, setAdult] = useState(PEOPLE_LIMIT.MIN_ADULT);
   const [child, setChild] = useState(PEOPLE_LIMIT.MIN);
   const [baby, setBaby] = useState(PEOPLE_LIMIT.MIN);
-  const [method, setMethod] = useState(FLIGHT_METHOD.ONEWAY);
-  const isRoundtrip = method === FLIGHT_METHOD.ROUNDTRIP;
 
   const onAdultChange = (newNumber) => {
     if (adult + child < PEOPLE_LIMIT.MAX) setAdult(newNumber);
@@ -31,32 +23,12 @@ const FlightInfo = () => {
     if (adult > baby) setBaby(newNumber);
   };
 
-  const handleToggleFlightMethod = () => {
-    method === FLIGHT_METHOD.ONEWAY
-      ? setMethod(FLIGHT_METHOD.ROUNDTRIP)
-      : setMethod(FLIGHT_METHOD.ONEWAY);
-  };
-
   return (
     <section className="[&_article]:flex [&_article]:items-start">
       <article>
         <Title src={flight} alt="flight icon">
           항공권
         </Title>
-        <Controller
-          control={control}
-          name="flighttype"
-          render={({ field: { onChange } }) => (
-            <ToggleBtn
-              checked={isRoundtrip}
-              onChange={() => {
-                handleToggleFlightMethod();
-                onChange(method);
-              }}
-              value={method}
-            />
-          )}
-        />
       </article>
 
       <article className="[&>div]:mr-20">
