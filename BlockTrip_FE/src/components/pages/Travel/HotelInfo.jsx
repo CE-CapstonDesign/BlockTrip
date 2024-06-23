@@ -27,9 +27,9 @@ const HotelInfo = ({ location, data, hotelIndex }) => {
     return (
       <section>
         <div className="[&>*]:leading-10">
-          <PlaceInfo data={data[hotelIndex].name}>숙소 이름</PlaceInfo>
+          <PlaceInfo data={data[hotelIndex]?.name}>숙소 이름</PlaceInfo>
           <PlaceInfo data={hotelAddress}>숙소 위치</PlaceInfo>
-          <PlaceInfo data={data[hotelIndex].price}>가격</PlaceInfo>
+          <PlaceInfo data={data[hotelIndex]?.price}>가격</PlaceInfo>
         </div>
         <Wrapper>
           <iframe
@@ -38,8 +38,8 @@ const HotelInfo = ({ location, data, hotelIndex }) => {
             height="400px"
             src={`https://www.google.com/maps/embed/v1/place?key=${
               import.meta.env.VITE_GOOGLE_KEY
-            }&q=${data[hotelIndex].latitude}, ${
-              data[hotelIndex].longitude
+            }&q=${data[hotelIndex]?.latitude}, ${
+              data[hotelIndex]?.longitude
             }&zoom=12`}
           />
         </Wrapper>

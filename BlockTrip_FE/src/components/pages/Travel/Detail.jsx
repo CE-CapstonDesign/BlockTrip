@@ -40,7 +40,7 @@ const Detail = ({ data }) => {
       <Date data={data} filter={filter} onClick={setFilter} />
       <div className="flex gap-24 mt-10">
         <ul className="[&_li]:cursor-pointer">
-          {data[filter].map((el, idx) => {
+          {data[filter]?.map((el, idx) => {
             return (
               <li
                 key={`${idx}-${el.latitude}`}

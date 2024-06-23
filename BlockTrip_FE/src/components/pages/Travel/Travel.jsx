@@ -25,10 +25,10 @@ export const Travel = () => {
           출발지는 <b>{depart}</b>, 도착지는 <b>{arrive}</b>입니다.
         </div>
         <section className="[&>*]:py-12">
-          <Hotel data={data.hotels} />
-          <Flight data={data.flightList} />
-          <Route data={data.placeList} />
-          <Detail data={data.placeList} />
+          <Hotel data={data?.hotels} />
+          <Flight data={data?.flightList} />
+          <Route data={data?.placeList} />
+          <Detail data={data?.placeList} />
         </section>
       </section>
     </>

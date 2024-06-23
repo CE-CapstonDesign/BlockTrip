@@ -61,10 +61,10 @@ const Route = ({ data }) => {
             height="670px"
             src={`https://www.google.com/maps/embed/v1/directions?key=${
               import.meta.env.VITE_GOOGLE_KEY
-            }&origin=${data[filter][0].latitude},${
-              data[filter][0].longitude
-            }&destination=${data[filter][len - 1].latitude},${
-              data[filter][len - 1].longitude
+            }&origin=${data[filter][0]?.latitude},${
+              data[filter][0]?.longitude
+            }&destination=${data[filter][len - 1]?.latitude},${
+              data[filter][len - 1]?.longitude
             }&zoom=13${
               route ? `&waypoints=${route}` : ""
             }&mode=${transportation}`}

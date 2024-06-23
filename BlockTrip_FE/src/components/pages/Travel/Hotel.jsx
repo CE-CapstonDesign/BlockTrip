@@ -66,7 +66,7 @@ const Hotel = ({ data }) => {
         {selectedHotel[hotelIndex] && (
           <div className="flex flex-col">
             <HotelInfo
-              location={data[hotelIndex].latitude}
+              location={data[hotelIndex]?.latitude}
               data={data}
               hotelIndex={hotelIndex}
             />
