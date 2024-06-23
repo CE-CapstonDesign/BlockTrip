@@ -55,9 +55,10 @@ public class SearchService {
         Coordinate myCoordinate = new Coordinate();
         String keyword = mySearch;
         String location = myLocation + " " + mySearch;
+        /*
         System.out.println("디버깅용 keyword: " + keyword);
         System.out.println("디버깅용 location: " + location);
-
+        */
         GeoApiContext context = new GeoApiContext.Builder()
                 .apiKey(apiKey)
                 .build();
@@ -70,7 +71,7 @@ public class SearchService {
 
             // 역지오코딩을 통해 주소를 가져와 설정
             String address = reverseGeocode(myCoordinate);
-            System.out.println("주소: " + address);
+           //  System.out.println("주소: " + address);
         }
         return myCoordinate;
     }
@@ -91,7 +92,7 @@ public class SearchService {
     }
 
     @Transactional
-    public boolean mapSearchValid(String myLocation, String mySearch) {
+    public String mapSearchValid(String myLocation, String mySearch) {
         String keyword = mySearch;
         String location = myLocation;
 
@@ -102,17 +103,23 @@ public class SearchService {
 
         // 지역의 좌표 얻기
         LatLng coordinates = getCoordinates(context, location);
+        /*
         System.out.println("========================");
         System.out.println("좌표값: " + coordinates.toString());
         System.out.println("========================");
-
+        */
         // 주변 장소 검색
         PlacesSearchResponse placesSearchResponse = searchNearbyPlaces(context, coordinates, keyword);
+        /*
         System.out.println("검색 결과 출력");
         System.out.println("========================");
-
+           */
+        String topResultName = "";
+        if (placesSearchResponse.results != null && placesSearchResponse.results.length > 0) {
+            topResultName = placesSearchResponse.results[0].name;
+        }
         // 검색 결과 출력
-        return printSearchResults(placesSearchResponse);
+        return topResultName;
     }
 
     private static PlacesSearchResponse searchNearbyPlaces(GeoApiContext context, LatLng location, String keyword) {
@@ -131,12 +138,12 @@ public class SearchService {
     private static boolean printSearchResults(PlacesSearchResponse response) {
         if (response != null && response.results.length != 0) {
             for (PlacesSearchResult result : response.results) {
-                System.out.println("해당 위치에 존재하는 가게입니다.");
-                System.out.println(result.name);
+            //    System.out.println("해당 위치에 존재하는 가게입니다.");
+            //    System.out.println(result.name);
             }
             return true;
         } else {
-            System.out.println("해당 위치에 존재하지 않는 가게입니다.");
+            // System.out.println("해당 위치에 존재하지 않는 가게입니다.");
             return false;
         }
     }
@@ -204,7 +211,7 @@ public class SearchService {
 
             driver.get(url);
 
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(13));
             List<WebElement> hotelElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("div[data-testid='property-card-container']")));
 
             Map<Integer, List<TravelResponseDTO.Hotel>> hotelsByDay = new HashMap<>();
@@ -212,7 +219,7 @@ public class SearchService {
             if (!hotelElements.isEmpty()) {
                 WebElement hotelElement = hotelElements.get(0); // 크롤링 페이지의 첫 번째 호텔 선택
                 try {
-                    System.out.println("호텔 디버깅: " + hotelElement.getText() + '\n');
+                    // System.out.println("호텔 디버깅: " + hotelElement.getText() + '\n');
                     String name = hotelElement.findElement(By.cssSelector("div[data-testid='title']")).getText().trim();
                     String price = hotelElement.findElement(By.cssSelector("span[data-testid='price-and-discounted-price']")).getText().trim();
                     String hotelAddress = hotelElement.findElement(By.cssSelector("span[data-testid='address']")).getText().trim();
@@ -435,7 +442,7 @@ public class SearchService {
 
         // 두 날짜 간의 일수 계산
         long daysBetween = ChronoUnit.DAYS.between(departDateFormat, arrivalDateFormat);
-
+        System.out.println("daysBetween: " + daysBetween);
         // 항공권 및 호텔 추천 받기
         try {
             // 여행지로 가는 항공권 크롤링
@@ -456,9 +463,11 @@ public class SearchService {
         List<Coordinate> realPlace = new ArrayList<>();
         // 식당 할루시네이션 처리
         for (int i = 0; i < travelPlan.getRecommendedRestaurants().size(); i++) {
-            if (mapSearchValid(destinationLocation, travelPlan.getRecommendedRestaurants().get(i))) {
+            String realPlaceName = "";
+            if ((realPlaceName=mapSearchValid(destinationLocation, travelPlan.getRecommendedRestaurants().get(i)))!="") {
                 Coordinate restaurantCoordinate = getCoordinate(destinationLocation, travelPlan.getRecommendedRestaurants().get(i));
                 if (restaurantCoordinate.getName() != null) {
+                    restaurantCoordinate.setName(realPlaceName);
                     realRestaurant.add(restaurantCoordinate);
                     System.out.println("Restaurant 추가되었습니다!: " + restaurantCoordinate.getName() + "위도와 경도: " + restaurantCoordinate.getLatitude() + ", " + restaurantCoordinate.getLongitude());
                 }
@@ -466,17 +475,21 @@ public class SearchService {
         }
         // 관광명소 할루시네이션 처리
         for (int i = 0; i < travelPlan.getRecommendedPlaces().size(); i++) {
-            if (mapSearchValid(destinationLocation, travelPlan.getRecommendedPlaces().get(i))) {
+            String realPlaceName = "";
+            if ((realPlaceName=mapSearchValid(destinationLocation, travelPlan.getRecommendedPlaces().get(i)))!="") {
                 Coordinate placeCoordinate = getCoordinate(destinationLocation, travelPlan.getRecommendedPlaces().get(i));
                 if (placeCoordinate.getName() != null) {
+                    placeCoordinate.setName(realPlaceName);
                     realPlace.add(placeCoordinate);
                     System.out.println("Place 추가되었습니다!: " + placeCoordinate.getName() + "위도와 경도: " + placeCoordinate.getLatitude() + ", " + placeCoordinate.getLongitude());
                 }
             }
         }
 
+        /*
         System.out.println("디버깅용 realRestaurant size : " + realRestaurant.size());
         System.out.println("디버깅용 realPlace size : " + realPlace.size());
+           */
 
         // 여행지 도착 시간을 추출합니다.
         String arriveTime = travelResponseDTO.getFlightList().get(0).getArrive();
@@ -485,6 +498,31 @@ public class SearchService {
         // 귀국을 위한 항공권 탑승 시간을 추출합니다.
         String departTime = travelResponseDTO.getFlightList().get(1).getDepart();
         int departHour = Integer.parseInt(departTime.split(":")[0]);
+
+        // 도착 시간을 계산하여 24시간을 초과하는 경우 daysBetween을 조정합니다.
+        TravelResponseDTO.Flight firstFlight = travelResponseDTO.getFlightList().get(0);
+        String departTimeStr = firstFlight.getDepart();
+        String durationStr = firstFlight.getDuration();
+        int departHourFlight = Integer.parseInt(departTimeStr.split(":")[0]);
+        int departMinuteFlight = Integer.parseInt(departTimeStr.split(":")[1]);
+
+        int durationHour = Integer.parseInt(durationStr.split("시간")[0].trim());
+        int durationMinute = Integer.parseInt(durationStr.split("시간")[1].split("분")[0].trim());
+
+        int arrivalHourFlight = departHourFlight + durationHour;
+        int arrivalMinuteFlight = departMinuteFlight + durationMinute;
+
+        if (arrivalMinuteFlight >= 60) {
+            arrivalHourFlight += arrivalMinuteFlight / 60;
+            arrivalMinuteFlight = arrivalMinuteFlight % 60;
+        }
+
+        if (arrivalHourFlight >= 24) {
+            daysBetween -= 1;
+        }
+
+        System.out.println("최종적인 daysBetween: " + daysBetween);
+
         try {
             Coordinate lastHotelCoordinate = null;
             for (long i = 0; i <= daysBetween; i++) {
