@@ -1,27 +1,30 @@
 import { Wrapper } from "@googlemaps/react-wrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/features/ui";
 import { setKey, setLanguage } from "react-geocode";
 import { TRANSPORTATION_TYPE } from "@/constants/location";
 import { Date } from "@/components/features/ui/Date";
 
 setKey(import.meta.env.VITE_GOOGLE_KEY);
-setLanguage("ko");
+setLanguage("en");
 
 const Route = ({ data }) => {
   const basicTransportation = Object.keys(TRANSPORTATION_TYPE)[0];
   const [filter, setFilter] = useState(0);
   const [transportation, setTransportation] = useState(basicTransportation);
 
-  const name = data[filter].flatMap((x) => x.name.replace("&", "+"));
-  const len = name.length;
+  const len = data[filter].length;
 
   const locationInfo =
     len > 2
       ? data[filter].slice(1, len - 1).map((x) => [x.latitude, x.longitude])
       : null;
 
-  const route = locationInfo?.map((x) => x.join(",")).join("|");
+  const route = locationInfo?.join("|");
+
+  useEffect(() => {
+    setTransportation(basicTransportation);
+  }, [filter]);
 
   return (
     <div>
