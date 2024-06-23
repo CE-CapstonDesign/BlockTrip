@@ -34,6 +34,12 @@ const Detail = ({ data }) => {
     select: (data) => data?.data.result,
   });
 
+  const ignoredTypes = ["establishment", "premise", "street_address"];
+
+  const types = infoData?.types
+    .slice(0, 3)
+    .filter((x) => !ignoredTypes.includes(x));
+
   return (
     <div>
       <p className="text-neutral-500 text-3xl mb-10">여행장소 상세</p>
@@ -65,7 +71,7 @@ const Detail = ({ data }) => {
             {infoData?.editorial_summary?.overview}
           </p>
           <p className="mt-3 flex gap-4 text-slate-500 text-lg">
-            {infoData?.types.slice(0, 3).map((x, idx) => (
+            {types?.map((x, idx) => (
               <span key={idx}># {x}</span>
             ))}
           </p>
