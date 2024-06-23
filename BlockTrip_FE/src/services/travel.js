@@ -9,21 +9,13 @@ export const travel = () => {
   return instance.get("/travel/plan", { timeout: 1000000 });
 };
 
-export const geocode = ({ latitude, longitude }) => {
-  return instance.get(
-    `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ko&key=${
+export const info = async (placeId) => {
+  return await axios.get(
+    `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&language=ko&key=${
       import.meta.env.VITE_GOOGLE_KEY
-    }`
+    }`,
+    {
+      withCredentials: false,
+    }
   );
-};
-
-const proxyurl = "https://cors-anywhere.herokuapp.com/";
-const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=ChIJrTLr-GyuEmsRBfy61i59si0&fields=address_components&key=${
-  import.meta.env.VITE_GOOGLE_KEY
-}`;
-
-export const info = async () => {
-  return await axios.get(proxyurl + url, {
-    withCredentials: true,
-  });
 };
