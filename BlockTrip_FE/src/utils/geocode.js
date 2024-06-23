@@ -12,3 +12,16 @@ export const getAddressFromLatLng = async (lat, lng) => {
   );
   return formattedAddress;
 };
+
+export const getPlaceId = async (lat, lng) => {
+  const fetchedPlaceId = await fromLatLng(lat, lng, "", "en").then(
+    (response) => {
+      const placeId = response.results[0].place_id;
+      return placeId;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+  return fetchedPlaceId;
+};
