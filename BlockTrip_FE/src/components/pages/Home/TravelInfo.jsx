@@ -15,20 +15,21 @@ const TravelInfo = () => {
   const [showDepart, setShowDepart] = useState(false);
   const [showDestination, setShowDestination] = useState(false);
   const [depart, setDepart] = useState("");
+  const [inputDepart, setInputDepart] = useState("");
   const [destination, setDestination] = useState("");
 
   useEffect(() => {
+    if (inputDepart !== "") {
+      setValue("depart", inputDepart);
+    } else {
+      setValue("depart", LOCATION[depart]);
+    }
+
     setValue("destinationLocation", destination);
     if (Object.keys(LOCATION).includes(destination)) {
       setValue("airportDestination", LOCATION[destination]);
     }
-
-    if (Object.keys(LOCATION).includes(depart)) {
-      setValue("depart", LOCATION[depart]);
-    } else {
-      setValue("depart", depart);
-    }
-  }, [depart, destination, setValue]);
+  }, [depart, destination, inputDepart, setValue]);
 
   return (
     <div>
@@ -42,7 +43,7 @@ const TravelInfo = () => {
             id="departures"
             setDefault={true}
             onChange={(e) => setDepart(e.target.value)}
-            list={Object.keys(LOCATION)}
+            list={Object.keys(LOCATION).sort()}
           />
           <div className="h-10">
             <Button
@@ -55,7 +56,7 @@ const TravelInfo = () => {
             {showDepart && (
               <Input
                 id="departures"
-                onChange={(e) => setDepart(e.target.value)}
+                onChange={(e) => setInputDepart(e.target.value)}
                 className="block"
                 placeholder="출발지를 입력하세요."
               />
@@ -69,7 +70,7 @@ const TravelInfo = () => {
             id="arrivals"
             setDefault={true}
             onChange={(e) => setDestination(e.target.value)}
-            list={Object.keys(LOCATION)}
+            list={Object.keys(LOCATION).sort()}
           />
           <div className="h-10">
             <Button
