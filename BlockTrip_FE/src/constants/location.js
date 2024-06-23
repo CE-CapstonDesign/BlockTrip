@@ -1,7 +1,6 @@
 export const TRANSPORTATION_TYPE = {
   driving: "자동차",
   walking: "도보",
-  transit: "대중교통",
   bicycling: "자전거",
 };
 
