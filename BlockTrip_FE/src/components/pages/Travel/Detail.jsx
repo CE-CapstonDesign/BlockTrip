@@ -34,7 +34,12 @@ const Detail = ({ data }) => {
     select: (data) => data?.data.result,
   });
 
-  const ignoredTypes = ["establishment", "premise", "street_address"];
+  const ignoredTypes = [
+    "establishment",
+    "premise",
+    "street_address",
+    "plus_code",
+  ];
 
   const types = infoData?.types
     .slice(0, 3)

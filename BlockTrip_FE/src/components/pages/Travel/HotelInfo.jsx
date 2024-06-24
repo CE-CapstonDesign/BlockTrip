@@ -22,7 +22,21 @@ const HotelInfo = ({ location, data, hotelIndex }) => {
   }, [hotelIndex]);
 
   if (location === "N/A") {
-    return <p className="leading-10">호텔을 찾지 못했습니다.</p>;
+    return (
+      <div className="text-lg">
+        <p className="leading-10">
+          여행지 주변의 호텔을 찾지 못했습니다. 직접 선택해보세요.
+        </p>
+        <a
+          href="https://www.booking.com"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="text-sky-700 font-bold"
+        >
+          -&gt; 호텔 찾기
+        </a>
+      </div>
+    );
   } else {
     return (
       <section>
